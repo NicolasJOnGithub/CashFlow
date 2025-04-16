@@ -110,6 +110,7 @@ public unsafe class TabTradeLog : BaseTab<TradeDescriptor>
             CharasRecvGilFromTotal.Clear();
             CharasGivenGilTo.Clear();
             CharasRecvGilFrom.Clear();
+            
         }
         return P.DataProvider.GetTrades(DateMin.ToUnixTimeMilliseconds(), DateMax.ToUnixTimeMilliseconds());
     }

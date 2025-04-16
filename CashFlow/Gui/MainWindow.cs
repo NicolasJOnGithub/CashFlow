@@ -60,6 +60,9 @@ public unsafe class MainWindow : ConfigWindow
         ImGui.SliderInt($"Time limit for merging trades, minutes", ref C.MergeTradeTreshold, 1, 10);
         ImGui.Unindent();
         ImGui.Checkbox("Change arrows directions", ref C.ReverseArrows);
+        ImGuiEx.TextV("Date format:");
+        ImGui.SameLine();
+        ImGuiEx.RadioButtonBool("Month/Day", "Day.Month", ref C.ReverseDayMonth, sameLine: true, inverted:true);
 
         ImGui.Separator();
         ImGui.Checkbox("Show recent gil transaction summary while trade window is open", ref C.ShowTradeOverlay);

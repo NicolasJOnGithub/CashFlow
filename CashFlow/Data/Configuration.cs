@@ -17,4 +17,5 @@ public class Configuration : IEzConfig
     public bool ShowTradeOverlay = false;
     public Dictionary<ulong, long> CachedRetainerGil = [];
     public bool ReverseArrows = false;
+    public bool ReverseDayMonth = false;
 }

@@ -5,6 +5,7 @@ using NightmareUI.Censoring;
 namespace CashFlow.Gui.BaseTabs;
 public unsafe class TabRetainerSales : BaseTab<RetainerSaleDescriptor>
 {
+    public Dictionary<uint, long> ItemValues = [];
     public override string SearchNameHint { get; } = "Search Player's/Retainer's Name...";
     public override void DrawTable()
     {
@@ -71,8 +72,17 @@ public unsafe class TabRetainerSales : BaseTab<RetainerSaleDescriptor>
         }
     }
 
+    public override void AddData(RetainerSaleDescriptor data, List<RetainerSaleDescriptor> list)
+    {
+        var id = (uint)data.ItemID % 1_000_000u;
+        if(!ItemValues.ContainsKey(id)) ItemValues[id] = 0;
+        ItemValues[id] += data.Price * data.Quantity;
+        base.AddData(data, list);
+    }
+
     public override List<RetainerSaleDescriptor> LoadData()
     {
+        ItemValues.Clear();
         return P.DataProvider.GetRetainerHistory(DateMin.ToUnixTimeMilliseconds(), DateMax.ToUnixTimeMilliseconds());
     }
 

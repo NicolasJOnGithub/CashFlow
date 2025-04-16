@@ -5,6 +5,7 @@ using NightmareUI.Censoring;
 namespace CashFlow.Gui.BaseTabs;
 public unsafe class TabNpcSales : BaseTab<NpcSaleSqlDescriptor>
 {
+    public Dictionary<uint, long> ItemValues = [];
     public override void DrawTable()
     {
         if(ImGuiEx.BeginDefaultTable(["Your Character", "Paid", "~Item Name", "Qty", "Date"]))
@@ -35,8 +36,17 @@ public unsafe class TabNpcSales : BaseTab<NpcSaleSqlDescriptor>
         }
     }
 
+    public override void AddData(NpcSaleSqlDescriptor data, List<NpcSaleSqlDescriptor> list)
+    {
+        var id = (uint)data.Item % 1_000_000u;
+        if(!ItemValues.ContainsKey(id)) ItemValues[id] = 0;
+        ItemValues[id] += data.Price * data.Quantity;
+        base.AddData(data, list);
+    }
+
     public override List<NpcSaleSqlDescriptor> LoadData()
     {
+        ItemValues.Clear();
         return P.DataProvider.GetNpcSales();
     }
 

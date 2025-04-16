@@ -15,6 +15,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
     public string DateMaxStr = "";
     public volatile int Results = 0;
     public int Page = 1;
+    private bool ShouldLoadAll = false;
 
     public virtual string SearchNameHint { get; } = "Search Player's Name...";
     public virtual string SearchItemHint { get; } = "Search Item...";
@@ -51,7 +52,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
         if(CSFramework.Instance()->FrameCounter - LastFrame > 2) NeedsUpdate = true;
         if(NeedsUpdate && !updateBlocked)
         {
-            Load();
+            Load(false);
             NeedsUpdate = false;
         }
         LastFrame = CSFramework.Instance()->FrameCounter;
@@ -114,9 +115,10 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
         updateBlocked = blocked;
     }
 
-    public void Load()
+    public void Load(bool ignoreSearchFilters, bool clear = true)
     {
-        S.WorkerThread.ClearAndEnqueue(() =>
+        OnPreLoadData();
+        ((Action<Action>)(clear ? S.WorkerThread.ClearAndEnqueue : S.WorkerThread.Enqueue))(() =>
         {
             var newCidMap = P.DataProvider.GetRegisteredPlayers();
             var data = LoadData();
@@ -124,11 +126,18 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
             var newData = new List<T>();
             foreach(var x in data.OrderBy(x => x.UnixTime))
             {
-                if(!ShouldAddData(x)) continue;
-                if(SearchName != "" && !ProcessSearchByName(x)) continue;
-                if(SearchItem != "" && !ProcessSearchByItem(x)) continue;
-                if(x.UnixTime > DateMax.ToUnixTimeMilliseconds()) continue;
-                if(x.UnixTime < DateMin.ToUnixTimeMilliseconds()) continue;
+                if(!ignoreSearchFilters)
+                {
+                    if(!ShouldAddData(x)) continue;
+                    if(SearchName != "" && !ProcessSearchByName(x)) continue;
+                    if(SearchItem != "" && !ProcessSearchByItem(x)) continue;
+                    if(x.UnixTime > DateMax.ToUnixTimeMilliseconds()) continue;
+                    if(x.UnixTime < DateMin.ToUnixTimeMilliseconds()) continue;
+                }
+                else
+                {
+                    ShouldAddData(x);
+                }
                 AddData(x, newData);
             }
             newData.Reverse();
@@ -141,6 +150,8 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
             });
         });
     }
+
+    public virtual void OnPreLoadData() { }
 
     public virtual void OnPostLoadDataAsync(List<T> newData) { }
 

@@ -5,6 +5,7 @@ using NightmareUI.Censoring;
 namespace CashFlow.Gui.BaseTabs;
 public unsafe class TabShopPurchases : BaseTab<ShopPurchaseSqlDescriptor>
 {
+    public Dictionary<uint, long> ItemValues = [];
     public override string SearchNameHint { get; } = "Search Player's/Retainer's Name...";
     public override void DrawTable()
     {
@@ -47,8 +48,17 @@ public unsafe class TabShopPurchases : BaseTab<ShopPurchaseSqlDescriptor>
         }
     }
 
+    public override void AddData(ShopPurchaseSqlDescriptor data, List<ShopPurchaseSqlDescriptor> list)
+    {
+        var id = (uint)data.Item % 1_000_000u;
+        if(!ItemValues.ContainsKey(id)) ItemValues[id] = 0;
+        ItemValues[id] += data.Price * data.Quantity;
+        base.AddData(data, list);
+    }
+
     public override List<ShopPurchaseSqlDescriptor> LoadData()
     {
+        ItemValues.Clear();
         return P.DataProvider.GetShopPurchases();
     }
 

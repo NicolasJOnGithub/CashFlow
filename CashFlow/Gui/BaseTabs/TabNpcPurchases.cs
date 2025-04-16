@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 namespace CashFlow.Gui.BaseTabs;
 public unsafe class TabNpcPurchases : BaseTab<NpcPurchaseSqlDescriptor>
 {
+    public Dictionary<uint, long> ItemValues = [];
+
     public override void DrawTable()
     {
         if(ImGuiEx.BeginDefaultTable(["Your Character", "Paid", "~Item Name", "Qty", "Date"]))
@@ -50,7 +52,17 @@ public unsafe class TabNpcPurchases : BaseTab<NpcPurchaseSqlDescriptor>
 
     public override List<NpcPurchaseSqlDescriptor> LoadData()
     {
+        
+        ItemValues.Clear();
         return P.DataProvider.GetNpcPurchases();
+    }
+
+    public override void AddData(NpcPurchaseSqlDescriptor data, List<NpcPurchaseSqlDescriptor> list)
+    {
+        var id = (uint)data.Item % 1_000_000u;
+        if(!ItemValues.ContainsKey(id)) ItemValues[id] = 0;
+        ItemValues[id] += data.Price * data.Quantity;
+        base.AddData(data, list);
     }
 
     public override bool ProcessSearchByItem(NpcPurchaseSqlDescriptor x)

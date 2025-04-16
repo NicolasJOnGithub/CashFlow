@@ -10,6 +10,19 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 namespace CashFlow;
 public static unsafe class Utils
 {
+    public static string GetBriefDate(this DateOnly date, bool? reverse = null)
+    {
+        reverse ??= C.ReverseDayMonth;
+        if(reverse == true)
+        {
+            return $"{date.Month:D2}/{date.Day:D2}";
+        }
+        else
+        {
+            return $"{date.Day:D2}.{date.Month:D2}";
+        }
+    }
+
     public static void DrawColoredGilText(long t)
     {
         Vector4? col = null;
