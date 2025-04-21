@@ -29,8 +29,12 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
     private Dictionary<ulong, long> GilByCharaSum = [];
     private bool AutoFit = false;
     private long TotalDiff = 0;
+    private long EarliestDiffDate = long.MaxValue;
     private OrderedDictionary<uint, long> TopItemsSold = [];
     private OrderedDictionary<uint, long> TopItemsPurchased = [];
+    private Dictionary<long, int> Diffs = [];
+
+    public override bool ShouldDrawPaginator => false;
 
     public TabGilHistory()
     {
@@ -83,45 +87,51 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         {
             if(GilByDateSum.Count > 0)
             {
-
-                if(ImPlot.BeginPlot("##GilHistory"))
+                if(ImPlot.BeginPlot("##GilHistory2"))
                 {
-                    var sorted = GilByDateSum.OrderBy(x => x.Key.GetTotalDays());
-                    var x_axisf = GilByDateSum.Keys.Select(x => (float)x.GetTotalDays()).ToArray();
-                    var y_axis = GilByDateSum.Values.Select(x => (float)((double)x / 1_000_000.0)).ToArray();
-                    var strings = GilByDateSum.Keys.Select(x => x.GetBriefDate()).ToArray();
-                    ImPlot.SetupAxisTicks(ImAxis.X1, ref DateRangeDoubles[0], DateRangeDoubles.Length, DateRangeStrings);
-                    ImPlot.SetupAxisFormat(ImAxis.Y1, "%gM");
-                    if(AutoFit)
+                    try
                     {
-                        ImPlot.SetNextAxesToFit();
-                        AutoFit = false;
-                    }
-                    ImPlot.PushStyleVar(ImPlotStyleVar.LineWeight, 4f);
-                    ImPlot.SetNextMarkerStyle(ImPlotMarker.Circle, 5f);
-                    ImPlot.PlotLine("Gil", ref x_axisf[0], ref y_axis[0], x_axisf.Length);
-                    if(ImPlot.IsPlotHovered())
-                    {
-                        List<(int Index, Vector2 Pos)> vec = [];
-                        for(int i = 0; i < x_axisf.Length; i++)
+                        var sorted = GilByDateSum.OrderBy(x => x.Key.GetTotalDays());
+                        var x_axisf = GilByDateSum.Keys.Select(x => (float)x.GetTotalDays()).ToArray();
+                        var y_axis = GilByDateSum.Values.Select(x => (float)((double)x / 1_000_000.0)).ToArray();
+                        var strings = GilByDateSum.Keys.Select(x => x.GetBriefDate()).ToArray();
+                        ImPlot.SetupAxisTicks(ImAxis.X1, ref DateRangeDoubles[0], DateRangeDoubles.Length, DateRangeStrings);
+                        ImPlot.SetupAxisFormat(ImAxis.Y1, "%gM");
+                        if(AutoFit)
                         {
-                            vec.Add((i, ImPlot.PlotToPixels(x_axisf[i], y_axis[i])));
+                            ImPlot.SetNextAxesToFit();
+                            AutoFit = false;
                         }
-                        var nearestPoint = vec.OrderBy(x => Vector2.DistanceSquared(ImGui.GetMousePos(), x.Pos));
-                        if(nearestPoint.Any())
+                        ImPlot.PushStyleVar(ImPlotStyleVar.LineWeight, 4f);
+                        ImPlot.SetNextMarkerStyle(ImPlotMarker.Circle, 5f);
+                        ImPlot.PlotLine("Gil", ref x_axisf[0], ref y_axis[0], x_axisf.Length);
+                        if(ImPlot.IsPlotHovered())
                         {
-                            var p = nearestPoint.First();
-                            //PluginLog.Information($"{ImPlot.PlotToPixels(ImPlot.GetPlotMousePos())} / {nearestPoint.First()} / {ImGui.GetMousePos()}");
-                            var plotP = ImPlot.PlotToPixels(ImPlot.GetPlotMousePos());
-                            var distance = Vector2.Distance(plotP, p.Pos);
-                            if(distance < 10)
+                            List<(int Index, Vector2 Pos)> vec = [];
+                            for(int i = 0; i < x_axisf.Length; i++)
                             {
-                                ImPlot.GetPlotDrawList().AddCircleFilled(new(p.Pos.X, p.Pos.Y), 7, EColor.RedBright.ToUint());
-                                ImGuiEx.Tooltip($"{strings.SafeSelect(p.Index)}\n{y_axis.SafeSelect(p.Index):N0}M gil");
+                                vec.Add((i, ImPlot.PlotToPixels(x_axisf[i], y_axis[i])));
+                            }
+                            var nearestPoint = vec.OrderBy(x => Vector2.DistanceSquared(ImGui.GetMousePos(), x.Pos));
+                            if(nearestPoint.Any())
+                            {
+                                var p = nearestPoint.First();
+                                //PluginLog.Information($"{ImPlot.PlotToPixels(ImPlot.GetPlotMousePos())} / {nearestPoint.First()} / {ImGui.GetMousePos()}");
+                                var plotP = ImPlot.PlotToPixels(ImPlot.GetPlotMousePos());
+                                var distance = Vector2.Distance(plotP, p.Pos);
+                                if(distance < 10)
+                                {
+                                    ImPlot.GetPlotDrawList().AddCircleFilled(new(p.Pos.X, p.Pos.Y), 7, EColor.RedBright.ToUint());
+                                    ImGuiEx.Tooltip($"{strings.SafeSelect(p.Index)}\n{y_axis.SafeSelect(p.Index):N0}M gil");
+                                }
                             }
                         }
+                        ImPlot.PopStyleVar();
                     }
-                    ImPlot.PopStyleVar();
+                    catch(Exception e)
+                    {
+                        e.Log();
+                    }
                     ImPlot.EndPlot();
                 }
             }
@@ -258,6 +268,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         }
         void drawStats()
         {
+            this.DrawPaginator();
             if(ImGuiEx.BeginDefaultTable(["Your Character", "~Total Gil", "Diff", "Date"]))
             {
                 for(int i = IndexBegin; i < IndexEnd; i++)
@@ -276,7 +287,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
                     Utils.DrawColoredGilText(t.Diff);
 
                     ImGui.TableNextColumn();
-                    ImGuiEx.Text(DateTimeOffset.FromUnixTimeMilliseconds(t.UnixTime).ToLocalTime().ToString());
+                    ImGuiEx.Text(DateTimeOffset.FromUnixTimeMilliseconds(t.UnixTime).ToPreferredTimeString());
                 }
                 ImGui.EndTable();
             }
@@ -311,20 +322,24 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         {
             if(ImGuiEx.BeginDefaultTable("Averages", ["1", "2"], false, ImGuiTableFlags.SizingStretchSame | ImGuiTableFlags.BordersInner, true))
             {
+                var maxTime = this.Data.OrderByDescending(x => x.UnixTime).FirstOrDefault()?.UnixTime;
+                var diffDays = (((double)maxTime - EarliestDiffDate) / 1000.0 / 60.0 / 60.0 / 24.0);
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
                 ImGuiEx.Text($"Total profit/loss per last year:");
                 Utils.DrawColoredGilText(this.TotalDiff);
                 ImGui.TableNextColumn();
-                ImGuiEx.Text($"Average per day:");
-                Utils.DrawColoredGilText(this.TotalDiff / 365);
+                ImGuiEx.Text($"Average per day");
+                Utils.DrawColoredGilText((int)(this.TotalDiff / diffDays));
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
-                ImGuiEx.Text($"Average per week:");
-                Utils.DrawColoredGilText(this.TotalDiff / (365/7));
+                var numWeeks = diffDays / (365.0 / 7.0);
+                ImGuiEx.Text($"Average per week");
+                Utils.DrawColoredGilText((int)(this.TotalDiff / diffDays * 7d));
                 ImGui.TableNextColumn();
-                ImGuiEx.Text($"Average per month:");
-                Utils.DrawColoredGilText(this.TotalDiff / 12);
+                var numMonths = diffDays / (365.0 / 12.0);
+                ImGuiEx.Text($"Average per month");
+                Utils.DrawColoredGilText((int)(this.TotalDiff / diffDays * (365.0/12.0)));
                 ImGui.EndTable();
             }
         }
@@ -346,14 +361,25 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
     public override void DrawSearchBar(out bool updateBlocked)
     {
         updateBlocked = false;
+        var ret = false;
         if(S.WorkerThread.IsBusy) return;
-        ImGuiEx.SetNextItemFullWidth();
-        if(ImGuiEx.Combo<ulong>("##selectPlayer", ref SelectedCID, [0, .. RecordedCIDs], names: [new KeyValuePair<ulong, string>(0, "All"), .. S.MainWindow.CIDMap.Where(x => RecordedCIDs.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value.ToString())]))
+        var isOpen = false;
+        ImGuiEx.InputWithRightButtonsArea(() =>
+        {
+            if(ImGuiEx.Combo<ulong>("##selectPlayer", ref SelectedCID, [0, .. RecordedCIDs], names: [new KeyValuePair<ulong, string>(0, "All"), .. S.MainWindow.CIDMap.Where(x => RecordedCIDs.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value.ToString())]))
+            {
+                Data.Clear();
+                NeedsUpdate = true;
+                ret = true;
+            }
+        }, () => DrawDateFilter(out isOpen));
+        if(isOpen)
         {
             Data.Clear();
             NeedsUpdate = true;
-            updateBlocked = true;
+            ret = true;
         }
+        updateBlocked = ret;
     }
 
     public override bool ShouldAddData(GilRecordSqlDescriptor data)
@@ -368,8 +394,10 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         PrevGil.Clear();
         RecordedCIDs.Clear();
         GilByDate.Clear();
+        Diffs.Clear();
         AutoFit = true;
         TotalDiff = 0;
+        EarliestDiffDate = long.MaxValue;
         this.TopItemsPurchased.Clear();
         this.TopItemsSold.Clear();
         return P.DataProvider.GetGilRecords();
@@ -387,6 +415,19 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
                 if(!GilByCharaSum.ContainsKey(x.Key))
                 {
                     GilByCharaSum[x.Key] = x.Value;
+                }
+            }
+        }
+        var latest = Data.OrderBy(x => x.UnixTime).FirstOrDefault();
+        if(latest != null)
+        {
+            var latestTime = latest.UnixTime;
+            foreach(var data in Data)
+            {
+                if(latestTime - data.UnixTime < 365 * 24 * 60 * 60 * 1000L)
+                {
+                    if(data.UnixTime < EarliestDiffDate) EarliestDiffDate = data.UnixTime;
+                    TotalDiff += data.Diff;
                 }
             }
         }
@@ -424,9 +465,5 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         PrevGil[data.CidUlong] = cur;
         var date = Utils.GetLocalDateFromUnixTime(data.UnixTime);
         GilByDate.GetOrCreate(date)[data.CidUlong] = cur;
-        if(DateTimeOffset.Now.ToUnixTimeMilliseconds() - data.UnixTime < 365 * 24 * 60 * 60 * 1000L)
-        {
-            TotalDiff += data.Diff;
-        }
     }
 }

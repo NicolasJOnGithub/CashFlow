@@ -65,7 +65,7 @@ public unsafe class MainWindow : ConfigWindow
         ImGuiEx.RadioButtonBool("Month/Day", "Day.Month", ref C.ReverseDayMonth, sameLine: true, inverted:true);
 
         ImGui.Separator();
-        ImGui.Checkbox("Show recent gil transaction summary while trade window is open", ref C.ShowTradeOverlay);
+        ImGui.Checkbox("Show history when trading", ref C.ShowTradeOverlay);
         ImGui.Indent();
         ImGui.SetNextItemWidth(150f);
         ImGui.InputInt("Time, minutes", ref C.LastGilTradesMin);
@@ -77,5 +77,22 @@ public unsafe class MainWindow : ConfigWindow
         ImGui.Checkbox("Lesser Censor Mode", ref C.CensorConfig.LesserCensor);
         if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Undo, "Reset Censor Seed")) C.CensorConfig.Seed = Guid.NewGuid().ToString();
         ImGui.Unindent();
+
+        ImGui.Separator();
+        ImGui.Checkbox($"Display UTC time", ref C.UseUTCTime);
+        ImGuiEx.HelpMarker($"Your local time will still be used for internal calculations");
+        ImGui.Checkbox($"Use custom time format", ref C.UseCustomTimeFormat);
+        if(C.UseCustomTimeFormat)
+        {
+            ImGui.Indent();
+            ImGui.SetNextItemWidth(200f);
+            ImGui.InputText($"Custom time format", ref C.CustomTimeFormat, 100);
+            ImGuiEx.HelpMarker("Click to open help");
+            if(ImGuiEx.HoveredAndClicked())
+            {
+                ShellStart("https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings");
+            }
+            ImGui.Unindent();
+        }
     }
 }

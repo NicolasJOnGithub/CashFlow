@@ -66,7 +66,7 @@ public unsafe class TabRetainerSales : BaseTab<RetainerSaleDescriptor>
                 ImGuiEx.Text($"x{t.Quantity}" + (t.ItemID > 1000000 ? "" : ""));
 
                 ImGui.TableNextColumn();
-                ImGuiEx.Text(DateTimeOffset.FromUnixTimeMilliseconds(t.UnixTime).ToLocalTime().ToString());
+                ImGuiEx.Text(DateTimeOffset.FromUnixTimeMilliseconds(t.UnixTime).ToPreferredTimeString());
             }
             ImGui.EndTable();
         }

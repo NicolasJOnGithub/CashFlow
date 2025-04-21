@@ -19,6 +19,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
 
     public virtual string SearchNameHint { get; } = "Search Player's Name...";
     public virtual string SearchItemHint { get; } = "Search Item...";
+    public virtual bool ShouldDrawPaginator { get; } = true;
 
     public int IndexBegin
     {
@@ -60,7 +61,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
         {
             ImGuiEx.Text(EColor.YellowBright, "Press enter load the data");
         }
-        DrawPaginator();
+        if(ShouldDrawPaginator) DrawPaginator();
         DrawTable();
     }
 
@@ -99,20 +100,32 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
                 blocked = true;
             }
             ImGui.SameLine();
-            if(DateWidget.DatePickerWithInput("##min", 1, ref DateMinStr, ref DateMin))
+            DrawDateFilter(out var isOpen);
+            if(isOpen)
             {
+                Data.Clear();
                 NeedsUpdate = true;
-            }
-            ImGui.SameLine(0, 1);
-            ImGuiEx.Text("-");
-            ImGui.SameLine(0, 1);
-            if(DateWidget.DatePickerWithInput("##max", 2, ref DateMaxStr, ref DateMax))
-            {
-                NeedsUpdate = true;
+                blocked = true;
             }
             DrawExtraFilters();
         });
         updateBlocked = blocked;
+    }
+
+    public void DrawDateFilter(out bool isOpen)
+    {
+        if(DateWidget.DatePickerWithInput("##min", 1, ref DateMinStr, ref DateMin,out var open1))
+        {
+            NeedsUpdate = true;
+        }
+        ImGui.SameLine(0, 1);
+        ImGuiEx.Text("-");
+        ImGui.SameLine(0, 1);
+        if(DateWidget.DatePickerWithInput("##max", 2, ref DateMaxStr, ref DateMax, out var open2))
+        {
+            NeedsUpdate = true;
+        }
+        isOpen = open1 || open2;
     }
 
     public void Load(bool ignoreSearchFilters, bool clear = true)

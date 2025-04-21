@@ -38,7 +38,7 @@ public unsafe class TabTradeLog : BaseTab<TradeDescriptor>
                     ImGuiEx.Text(S.MainWindow.CIDMap.TryGetValue(t.TradePartnerCID, out var s) ? Censor.Character(s.ToString()) : Censor.Hide($"{t.TradePartnerCID:X16}"));
                 }
                 ImGui.TableNextColumn();
-                ImGuiEx.Text(DateTimeOffset.FromUnixTimeMilliseconds(t.UnixTime).ToLocalTime().ToString());
+                ImGuiEx.Text(DateTimeOffset.FromUnixTimeMilliseconds(t.UnixTime).ToPreferredTimeString());
                 ImGui.TableNextColumn();
                 if(t.ReceivedGil > 0)
                 {

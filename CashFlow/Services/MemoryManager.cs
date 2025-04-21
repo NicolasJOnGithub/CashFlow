@@ -125,7 +125,7 @@ public unsafe class MemoryManager
     {
         try
         {
-            PluginLog.Debug($"PPSLMD: {a1}, {a2}, {(nint)a3:X16}, {a4}\n{MemoryHelper.ReadRaw((nint)a3, 50).ToHexString()}");
+            //PluginLog.Debug($"PPSLMD: {a1}, {a2}, {(nint)a3:X16}, {a4}\n{MemoryHelper.ReadRaw((nint)a3, 50).ToHexString()}");
             if(a2 == 1687)
             {
                 //PluginLog.Debug($"Purchase detected: {a3->Item.ValueNullable?.GetName()}/x{a3->Quantity} for {a3->Price} gil, hq={a3->IsHQ}");
@@ -142,7 +142,7 @@ public unsafe class MemoryManager
             }
             else if(a2 == 1688)
             {
-                PluginLog.Debug($"Sale detected: {a3->Item.ValueNullable?.GetName()}/x{a3->Quantity} for {a3->Price} gil, hq={a3->IsHQ}");
+                //PluginLog.Debug($"Sale detected: {a3->Item.ValueNullable?.GetName()}/x{a3->Quantity} for {a3->Price} gil, hq={a3->IsHQ}");
 
                 P.DataProvider.RecordNpcSale(new()
                 {
@@ -156,7 +156,7 @@ public unsafe class MemoryManager
             }
             else if(a2 == 1689)
             {
-                PluginLog.Debug($"Buyback detected: {a3->Item.ValueNullable?.GetName()}/x{a3->Quantity} for {a3->Price} gil, hq={a3->IsHQ}");
+                //PluginLog.Debug($"Buyback detected: {a3->Item.ValueNullable?.GetName()}/x{a3->Quantity} for {a3->Price} gil, hq={a3->IsHQ}");
 
                 P.DataProvider.RecordNpcPurchase(new()
                 {

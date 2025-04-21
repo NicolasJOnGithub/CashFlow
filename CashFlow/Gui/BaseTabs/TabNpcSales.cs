@@ -30,7 +30,7 @@ public unsafe class TabNpcSales : BaseTab<NpcSaleSqlDescriptor>
                 ImGuiEx.Text($"x{t.Quantity}" + (t.Item > 1000000 ? "" : ""));
 
                 ImGui.TableNextColumn();
-                ImGuiEx.Text(DateTimeOffset.FromUnixTimeMilliseconds(t.UnixTime).ToLocalTime().ToString());
+                ImGuiEx.Text(DateTimeOffset.FromUnixTimeMilliseconds(t.UnixTime).ToPreferredTimeString());
             }
             ImGui.EndTable();
         }

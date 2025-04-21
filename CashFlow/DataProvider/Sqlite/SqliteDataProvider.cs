@@ -286,7 +286,7 @@ public unsafe class SqliteDataProvider : DataProviderBase
         S.WorkerThread.Enqueue(() =>
         {
             using var db = new GilsightQueryFactory();
-            db.Query(Tables.NpcSales).Insert(npcPurchaseSqlDescriptor);
+            db.Query(Tables.NpcPurchases).Insert(npcPurchaseSqlDescriptor);
         });
     }
 

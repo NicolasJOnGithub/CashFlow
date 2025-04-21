@@ -48,21 +48,28 @@ public static class DateWidget
     }
 
     public static string DateFormat = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern + " " + CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern;
-    public static bool DatePickerWithInput(string label, int id, ref string dateString, ref DateTime date)
+    public static bool DatePickerWithInput(string label, int id, ref string dateString, ref DateTime date, out bool isOpen)
     {
+        isOpen = false;
         var ret = false;
         var format = DateFormat;
         ImGui.SetNextItemWidth(ImGui.CalcTextSize(Sample.ToString(format)).X + ImGui.GetStyle().ItemInnerSpacing.X * 2);
         if(ImGui.InputTextWithHint($"##{label}Input", format.ToUpper(), ref dateString, 32, ImGuiInputTextFlags.CallbackCompletion))
         {
             if(DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var tmp))
+            {
                 date = tmp;
+            }
+        }
+        if(ImGui.IsItemDeactivatedAfterEdit())
+        {
+            ret = true;
         }
 
         ImGui.SameLine(0, 3.0f * ImGuiHelpers.GlobalScale);
 
         ImGuiEx.IconButton(FontAwesomeIcon.Calendar, id.ToString());
-        if(DatePicker(label, ref date, false))
+        if(DatePicker(label, ref date, false, isOpen:out isOpen))
         {
             ret = true;
             dateString = date.ToString(format);
@@ -70,8 +77,9 @@ public static class DateWidget
         return ret;
     }
 
-    private static bool DatePicker(string label, ref DateTime dateOut, bool closeWhenMouseLeavesIt, string leftArrow = "", string rightArrow = "")
+    private static bool DatePicker(string label, ref DateTime dateOut, bool closeWhenMouseLeavesIt, out bool isOpen, string leftArrow = "", string rightArrow = "")
     {
+        isOpen = false;
         using var mono = ImRaii.PushFont(UiBuilder.MonoFont);
         if(LongestMonthWidth == 0.0f)
         {
@@ -104,6 +112,7 @@ public static class DateWidget
         using var popupItem = ImRaii.ContextPopupItem(label, ImGuiPopupFlags.None);
         if(!popupItem.Success)
             return valueChanged;
+        isOpen = true;
 
         if(ImGui.GetIO().MouseClicked[1])
         {

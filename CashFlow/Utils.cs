@@ -98,7 +98,21 @@ public static unsafe class Utils
 
     public static string ToPreferredTimeString(this DateTimeOffset dto)
     {
-        return dto.ToLocalTime().ToString();
+        if(C.UseCustomTimeFormat)
+        {
+            try
+            {
+                return C.UseUTCTime ? dto.ToString(C.CustomTimeFormat) : dto.ToLocalTime().ToString(C.CustomTimeFormat);
+            }
+            catch(Exception)
+            {
+                return $"Time format error";
+            }
+        }
+        else
+        {
+            return C.UseUTCTime?dto.ToString():dto.ToLocalTime().ToString();
+        }
     }
 
     public static int ShopLoadedItems => AtkStage.Instance()->GetNumberArrayData()[36]->IntArray[401];
