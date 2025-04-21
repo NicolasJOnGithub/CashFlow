@@ -1,13 +1,6 @@
-﻿using CashFlow.Data;
-using CashFlow.Gui.BaseTabs;
+﻿using CashFlow.Gui.BaseTabs;
 using ECommons.ChatMethods;
 using ECommons.SimpleGui;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.Gui;
 public unsafe class MainWindow : ConfigWindow
@@ -62,7 +55,7 @@ public unsafe class MainWindow : ConfigWindow
         ImGui.Checkbox("Change arrows directions", ref C.ReverseArrows);
         ImGuiEx.TextV("Date format:");
         ImGui.SameLine();
-        ImGuiEx.RadioButtonBool("Month/Day", "Day.Month", ref C.ReverseDayMonth, sameLine: true, inverted:true);
+        ImGuiEx.RadioButtonBool("Month/Day", "Day.Month", ref C.ReverseDayMonth, sameLine: true, inverted: true);
 
         ImGui.Separator();
         ImGui.Checkbox("Show history when trading", ref C.ShowTradeOverlay);

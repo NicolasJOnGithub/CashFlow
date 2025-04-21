@@ -1,22 +1,14 @@
 ﻿using CashFlow.Data.SqlDescriptors;
 using ECommons.ExcelServices;
-using FFXIVClientStructs.Interop;
 using ImPlotNET;
 using NightmareUI;
 using NightmareUI.Censoring;
-using NightmareUI.PrimaryUI;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.Gui.BaseTabs;
 public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
 {
     private DateOnly[] DateRange;
-    private string[] DateRangeStrings => C.ReverseDayMonth?DateRangeStringsR:DateRangeStringsN;
+    private string[] DateRangeStrings => C.ReverseDayMonth ? DateRangeStringsR : DateRangeStringsN;
     private string[] DateRangeStringsN;
     private string[] DateRangeStringsR;
     private float[] DateRangeFloats;
@@ -51,7 +43,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         DateRangeDoubles = [.. dates.Select(x => (double)x.GetTotalDays())];
     }
 
-    void PopulateGilByDateSum()
+    private void PopulateGilByDateSum()
     {
         var uniques = GilByDate.Values.Select(x => x.Keys).SelectMany(x => x).Distinct().ToArray();
         foreach(var x in GilByDate)
@@ -108,7 +100,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
                         if(ImPlot.IsPlotHovered())
                         {
                             List<(int Index, Vector2 Pos)> vec = [];
-                            for(int i = 0; i < x_axisf.Length; i++)
+                            for(var i = 0; i < x_axisf.Length; i++)
                             {
                                 vec.Add((i, ImPlot.PlotToPixels(x_axisf[i], y_axis[i])));
                             }
@@ -140,10 +132,10 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         {
             e.Log();
         }
-        NuiTools.ButtonTabs("GilTabs", [[new("Stats By Day", drawStats), new("Averages", drawAverages), new("Totals", drawTotals), new("Tops", drawTops)]], child:false);
+        NuiTools.ButtonTabs("GilTabs", [[new("Stats By Day", drawStats), new("Averages", drawAverages), new("Totals", drawTotals), new("Tops", drawTops)]], child: false);
         void drawTops()
         {
-            if(this.SelectedCID == 0)
+            if(SelectedCID == 0)
             {
                 {
                     var data = S.MainWindow.TabTradeLog.CharasGivenGilToTotal;
@@ -190,7 +182,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
                 ImGuiEx.Text($"Items sold, gil, top-5:");
                 if(ImGuiEx.BeginDefaultTable("ItemsTop2", ["Item##top2", "~Total Gil"]))
                 {
-                    foreach(var t in this.TopItemsSold)
+                    foreach(var t in TopItemsSold)
                     {
                         ImGui.TableNextRow();
                         ImGui.TableNextColumn();
@@ -206,7 +198,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
                 ImGuiEx.Text($"Items purchased, gil, top-5:");
                 if(ImGuiEx.BeginDefaultTable("ItemsTop", ["Item##top", "~Total Gil"]))
                 {
-                    foreach(var t in this.TopItemsPurchased)
+                    foreach(var t in TopItemsPurchased)
                     {
                         ImGui.TableNextRow();
                         ImGui.TableNextColumn();
@@ -268,10 +260,10 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         }
         void drawStats()
         {
-            this.DrawPaginator();
+            DrawPaginator();
             if(ImGuiEx.BeginDefaultTable(["Your Character", "~Total Gil", "Diff", "Date"]))
             {
-                for(int i = IndexBegin; i < IndexEnd; i++)
+                for(var i = IndexBegin; i < IndexEnd; i++)
                 {
                     var t = Data[i];
                     ImGui.TableNextRow();
@@ -296,7 +288,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         {
             if(ImGuiEx.BeginDefaultTable(["Your Character", "~Total Gil"]))
             {
-                foreach(var t in this.GilByCharaSum)
+                foreach(var t in GilByCharaSum)
                 {
                     ImGui.TableNextRow();
                     ImGui.TableNextColumn();
@@ -322,24 +314,24 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         {
             if(ImGuiEx.BeginDefaultTable("Averages", ["1", "2"], false, ImGuiTableFlags.SizingStretchSame | ImGuiTableFlags.BordersInner, true))
             {
-                var maxTime = this.Data.OrderByDescending(x => x.UnixTime).FirstOrDefault()?.UnixTime;
+                var maxTime = Data.OrderByDescending(x => x.UnixTime).FirstOrDefault()?.UnixTime;
                 var diffDays = (((double)maxTime - EarliestDiffDate) / 1000.0 / 60.0 / 60.0 / 24.0);
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
                 ImGuiEx.Text($"Total profit/loss per last year:");
-                Utils.DrawColoredGilText(this.TotalDiff);
+                Utils.DrawColoredGilText(TotalDiff);
                 ImGui.TableNextColumn();
                 ImGuiEx.Text($"Average per day");
-                Utils.DrawColoredGilText((int)(this.TotalDiff / diffDays));
+                Utils.DrawColoredGilText((int)(TotalDiff / diffDays));
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
                 var numWeeks = diffDays / (365.0 / 7.0);
                 ImGuiEx.Text($"Average per week");
-                Utils.DrawColoredGilText((int)(this.TotalDiff / diffDays * 7d));
+                Utils.DrawColoredGilText((int)(TotalDiff / diffDays * 7d));
                 ImGui.TableNextColumn();
                 var numMonths = diffDays / (365.0 / 12.0);
                 ImGuiEx.Text($"Average per month");
-                Utils.DrawColoredGilText((int)(this.TotalDiff / diffDays * (365.0/12.0)));
+                Utils.DrawColoredGilText((int)(TotalDiff / diffDays * (365.0 / 12.0)));
                 ImGui.EndTable();
             }
         }
@@ -398,8 +390,8 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         AutoFit = true;
         TotalDiff = 0;
         EarliestDiffDate = long.MaxValue;
-        this.TopItemsPurchased.Clear();
-        this.TopItemsSold.Clear();
+        TopItemsPurchased.Clear();
+        TopItemsSold.Clear();
         return P.DataProvider.GetGilRecords();
     }
 
@@ -440,8 +432,8 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
             S.MainWindow.TabTradeLog.Load(true, false);
             S.WorkerThread.Enqueue(() =>
             {
-                this.TopItemsSold = [.. S.MainWindow.TabNpcSales.ItemValues.Union(S.MainWindow.TabRetainerSales.ItemValues).OrderByDescending(x => x.Value).Take(5)];
-                this.TopItemsPurchased = [.. S.MainWindow.TabNpcPurchases.ItemValues.Union(S.MainWindow.TabShopPurchases.ItemValues).OrderByDescending(x => x.Value).Take(5)];
+                TopItemsSold = [.. S.MainWindow.TabNpcSales.ItemValues.Union(S.MainWindow.TabRetainerSales.ItemValues).OrderByDescending(x => x.Value).Take(5)];
+                TopItemsPurchased = [.. S.MainWindow.TabNpcPurchases.ItemValues.Union(S.MainWindow.TabShopPurchases.ItemValues).OrderByDescending(x => x.Value).Take(5)];
             });
         });
     }
@@ -461,7 +453,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
     {
         base.AddData(data, list);
         var cur = data.GilPlayer + data.GilRetainer;
-        data.Diff = PrevGil.ContainsKey(data.CidUlong)?cur - PrevGil[data.CidUlong]:0;
+        data.Diff = PrevGil.ContainsKey(data.CidUlong) ? cur - PrevGil[data.CidUlong] : 0;
         PrevGil[data.CidUlong] = cur;
         var date = Utils.GetLocalDateFromUnixTime(data.UnixTime);
         GilByDate.GetOrCreate(date)[data.CidUlong] = cur;

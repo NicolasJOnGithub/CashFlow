@@ -8,13 +8,12 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using System.Diagnostics;
-using static FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentHousingPlant;
 
 namespace CashFlow.Gui;
 public static unsafe class TabDebug
 {
-    static Stopwatch Sw1 = new();
-    static Stopwatch Sw2 = new();
+    private static Stopwatch Sw1 = new();
+    private static Stopwatch Sw2 = new();
     public static void Draw()
     {
         if(ImGui.CollapsingHeader("Test speed"))
@@ -30,7 +29,7 @@ public static unsafe class TabDebug
             }
             var cur = ImGui.GetCursorPos();
             Sw1.Start();
-            for(int i = 0; i < 10000; i++)
+            for(var i = 0; i < 10000; i++)
             {
                 ImGui.SetCursorPos(cur);
                 ImGui.PushStyleColor(ImGuiCol.Text, EColor.Red);
@@ -47,7 +46,7 @@ public static unsafe class TabDebug
             }
             Sw1.Stop();
             Sw2.Start();
-            for(int i = 0; i < 10000; i++)
+            for(var i = 0; i < 10000; i++)
             {
                 ImGui.SetCursorPos(cur);
                 using(_ = ImRaii.PushColor(ImGuiCol.Text, EColor.Red))
@@ -82,7 +81,7 @@ public static unsafe class TabDebug
                 //ImGuiEx.TextWrapped(MemoryHelper.ReadRaw((nint)info, 192).ToHexString());
                 //ImGuiEx.TextWrapped(MemoryHelper.ReadRaw(((nint)info)+ 192 + 0xC*sizeof(AgentMerchantSettingInfo.MannequinnItem), 300).ToHexString());
                 ImGuiEx.Text($"Selected items: {info->SelectedItems:B32} / {Bitmask.IsBitSet(info->SelectedItems, 0)}");
-                for(int i = 0; i < info->ItemsSpan.Length; i++)
+                for(var i = 0; i < info->ItemsSpan.Length; i++)
                 {
                     var item = info->ItemsSpan[i];
                     ImGuiEx.Text($"""

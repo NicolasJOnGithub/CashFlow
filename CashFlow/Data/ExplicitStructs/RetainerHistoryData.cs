@@ -1,9 +1,4 @@
 ﻿using Dalamud.Memory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.Data.ExplicitStructs;
 [StructLayout(LayoutKind.Explicit, Size = 52)]

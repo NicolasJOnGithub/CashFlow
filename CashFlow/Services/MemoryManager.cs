@@ -1,15 +1,12 @@
 ﻿using CashFlow.Data.ExplicitStructs;
 using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Hooking;
 using Dalamud.Memory;
 using ECommons.Automation;
 using ECommons.ExcelServices;
 using ECommons.EzHookManager;
 using ECommons.GameHelpers;
 using ECommons.MathHelpers;
-using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Network;
-using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace CashFlow.Services;
@@ -25,7 +22,7 @@ public unsafe class MemoryManager
     [EzHook("40 55 53 56 57 41 56 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 ?? ?? ?? ?? 8B DA", false)]
     public EzHook<ProcessEventLogMessage> ProcessEventLogMessageHook;
 
-    nint ProcessEventLogMessageDetour(nint a1, int a2, nint a3, nint a4)
+    private nint ProcessEventLogMessageDetour(nint a1, int a2, nint a3, nint a4)
     {
         try
         {
@@ -33,7 +30,7 @@ public unsafe class MemoryManager
             PluginLog.Information($"{(nint)AgentMerchantSettingInfo.Instance()}");
             if(a2 == 6079 || a2 == 6080)
             {
-                for(int i = 0; i < S.EventWatcher.LastMerchantInfo.Data.ItemsSpan.Length; i++)
+                for(var i = 0; i < S.EventWatcher.LastMerchantInfo.Data.ItemsSpan.Length; i++)
                 {
                     if(Bitmask.IsBitSet(S.EventWatcher.LastMerchantInfo.Data.SelectedItems, i))
                     {

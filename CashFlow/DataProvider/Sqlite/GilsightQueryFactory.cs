@@ -2,12 +2,7 @@
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.DataProvider.Sqlite;
 public sealed class GilsightQueryFactory : IDisposable

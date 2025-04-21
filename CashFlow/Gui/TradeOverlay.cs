@@ -1,15 +1,8 @@
 ﻿using CashFlow.Data;
-using ECommons.Configuration;
 using ECommons.ExcelServices;
 using ECommons.GameFunctions;
-using ECommons.GameHelpers;
 using ECommons.SimpleGui;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.Gui;
 public unsafe class TradeOverlay : Window

@@ -3,7 +3,6 @@ using CashFlow.Data.LegacyDescriptors;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Memory;
 using ECommons.GameHelpers;
-using FFXIVClientStructs;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
@@ -41,7 +40,7 @@ public static unsafe class Utils
 
     public static long GetTotalDays(this DateOnly date)
     {
-        return new DateTimeOffset(date, new TimeOnly(0, 0), TimeSpan.Zero).ToUnixTimeMilliseconds() / (24L*60L*60L*1000L);
+        return new DateTimeOffset(date, new TimeOnly(0, 0), TimeSpan.Zero).ToUnixTimeMilliseconds() / (24L * 60L * 60L * 1000L);
     }
 
     public static DateOnly GetLocalDateFromUnixTime(long unixtime)
@@ -90,7 +89,7 @@ public static unsafe class Utils
     }
     public static void DrawGilIncrease(bool sameLine = true)
     {
-        ImGuiEx.Text(EColor.Green, UiBuilder.DefaultFont, C.ReverseArrows? "↗" : $"↘");
+        ImGuiEx.Text(EColor.Green, UiBuilder.DefaultFont, C.ReverseArrows ? "↗" : $"↘");
         if(sameLine) ImGui.SameLine(0, 0);
     }
 
@@ -111,7 +110,7 @@ public static unsafe class Utils
         }
         else
         {
-            return C.UseUTCTime?dto.ToString():dto.ToLocalTime().ToString();
+            return C.UseUTCTime ? dto.ToString() : dto.ToLocalTime().ToString();
         }
     }
 

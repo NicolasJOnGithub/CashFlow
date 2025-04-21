@@ -25,7 +25,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
     {
         get
         {
-            if((Page-1) * C.PerPage > Data.Count)
+            if((Page - 1) * C.PerPage > Data.Count)
             {
                 Page = 1;
             }
@@ -114,7 +114,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
 
     public void DrawDateFilter(out bool isOpen)
     {
-        if(DateWidget.DatePickerWithInput("##min", 1, ref DateMinStr, ref DateMin,out var open1))
+        if(DateWidget.DatePickerWithInput("##min", 1, ref DateMinStr, ref DateMin, out var open1))
         {
             NeedsUpdate = true;
         }

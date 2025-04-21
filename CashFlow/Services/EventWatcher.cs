@@ -1,21 +1,10 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.ExplicitStructs;
 using CashFlow.Data.SqlDescriptors;
-using Dalamud.Game;
-using Dalamud.Game.Addon.Events;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Memory;
-using ECommons.GameHelpers;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel.Sheets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.Services;
 public unsafe class EventWatcher : IDisposable
@@ -44,7 +33,7 @@ public unsafe class EventWatcher : IDisposable
     private void OnMerchantShopSetup(AddonEvent type, AddonArgs args)
     {
         S.MemoryManager.ProcessEventLogMessageHook.Enable();
-        this.LastMerchantInfo = null;
+        LastMerchantInfo = null;
     }
 
     private void OnMerchantShopFinalize(AddonEvent type, AddonArgs args)
@@ -60,7 +49,7 @@ public unsafe class EventWatcher : IDisposable
             LastMerchantInfo = new(*data, "");
             if(Svc.Targets.Target is ICharacter c && c.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.EventNpc && Svc.Data.GetExcelSheet<ENpcBase>().TryGetRow(c.DataId, out var result) && result.ENpcData[0].RowId == 721407)
             {
-                this.LastMerchantInfo.Name = c.Name.ToString();
+                LastMerchantInfo.Name = c.Name.ToString();
             }
         }
     }

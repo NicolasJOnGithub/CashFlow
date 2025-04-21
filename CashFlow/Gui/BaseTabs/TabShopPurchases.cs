@@ -11,7 +11,7 @@ public unsafe class TabShopPurchases : BaseTab<ShopPurchaseSqlDescriptor>
     {
         if(ImGuiEx.BeginDefaultTable(["Your Character", "Retainer", "Paid", "~Item", "##qty", "Date"]))
         {
-            for(int i = IndexBegin; i < IndexEnd; i++)
+            for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];
                 ImGui.TableNextRow();

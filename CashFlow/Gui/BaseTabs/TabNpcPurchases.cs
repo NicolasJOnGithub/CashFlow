@@ -1,11 +1,6 @@
 ﻿using CashFlow.Data.SqlDescriptors;
 using ECommons.ExcelServices;
 using NightmareUI.Censoring;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.Gui.BaseTabs;
 public unsafe class TabNpcPurchases : BaseTab<NpcPurchaseSqlDescriptor>
@@ -16,7 +11,7 @@ public unsafe class TabNpcPurchases : BaseTab<NpcPurchaseSqlDescriptor>
     {
         if(ImGuiEx.BeginDefaultTable(["Your Character", "Paid", "~Item Name", "Qty", "Date"]))
         {
-            for(int i = IndexBegin; i < IndexEnd; i++)
+            for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];
                 ImGui.TableNextRow();
@@ -52,7 +47,7 @@ public unsafe class TabNpcPurchases : BaseTab<NpcPurchaseSqlDescriptor>
 
     public override List<NpcPurchaseSqlDescriptor> LoadData()
     {
-        
+
         ItemValues.Clear();
         return P.DataProvider.GetNpcPurchases();
     }

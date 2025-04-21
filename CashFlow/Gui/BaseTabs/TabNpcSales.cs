@@ -10,7 +10,7 @@ public unsafe class TabNpcSales : BaseTab<NpcSaleSqlDescriptor>
     {
         if(ImGuiEx.BeginDefaultTable(["Your Character", "Paid", "~Item Name", "Qty", "Date"]))
         {
-            for(int i = IndexBegin; i < IndexEnd; i++)
+            for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];
                 ImGui.TableNextRow();

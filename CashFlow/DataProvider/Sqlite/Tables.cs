@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CashFlow.DataProvider.Sqlite;
+﻿namespace CashFlow.DataProvider.Sqlite;
 public static unsafe class Tables
 {
     public static readonly string CidMap = "CidMap";

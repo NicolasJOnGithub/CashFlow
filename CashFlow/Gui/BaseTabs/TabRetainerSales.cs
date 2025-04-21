@@ -30,7 +30,7 @@ public unsafe class TabRetainerSales : BaseTab<RetainerSaleDescriptor>
                 if(index == 5) Sales = [.. isAsc ? Sales.OrderBy(index5func) : Sales.OrderByDescending(index5func)];
                 if(index == 6) Sales = [.. isAsc ? Sales.OrderBy(index6func) : Sales.OrderByDescending(index6func)];
             }*/
-            for(int i = IndexBegin; i < IndexEnd; i++)
+            for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];
                 ImGui.TableNextRow();

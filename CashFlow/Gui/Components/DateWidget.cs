@@ -1,12 +1,6 @@
-﻿using CashFlow.Data;
-using Dalamud.Interface.ImGuiNotification;
+﻿using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.Utility.Raii;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.Gui.Components;
 public static class DateWidget
@@ -69,7 +63,7 @@ public static class DateWidget
         ImGui.SameLine(0, 3.0f * ImGuiHelpers.GlobalScale);
 
         ImGuiEx.IconButton(FontAwesomeIcon.Calendar, id.ToString());
-        if(DatePicker(label, ref date, false, isOpen:out isOpen))
+        if(DatePicker(label, ref date, false, isOpen: out isOpen))
         {
             ret = true;
             dateString = date.ToString(format);

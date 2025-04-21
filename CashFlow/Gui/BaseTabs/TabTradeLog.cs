@@ -25,7 +25,7 @@ public unsafe class TabTradeLog : BaseTab<TradeDescriptor>
     {
         if(ImGuiEx.BeginDefaultTable(OnlyGil ? OnlyGilHeaders : NormalHeaders))
         {
-            for(int i = IndexBegin; i < IndexEnd; i++)
+            for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];
                 ImGui.TableNextRow();
@@ -104,13 +104,13 @@ public unsafe class TabTradeLog : BaseTab<TradeDescriptor>
 
     public override List<TradeDescriptor> LoadData()
     {
-        if(this.SearchItem == "" && this.SearchName == "")
+        if(SearchItem == "" && SearchName == "")
         {
             CharasGivenGilToTotal.Clear();
             CharasRecvGilFromTotal.Clear();
             CharasGivenGilTo.Clear();
             CharasRecvGilFrom.Clear();
-            
+
         }
         return P.DataProvider.GetTrades(DateMin.ToUnixTimeMilliseconds(), DateMax.ToUnixTimeMilliseconds());
     }
@@ -130,11 +130,11 @@ public unsafe class TabTradeLog : BaseTab<TradeDescriptor>
     public override void AddData(TradeDescriptor x, List<TradeDescriptor> list)
     {
 
-        if(this.SearchItem == "" && this.SearchName == "")
+        if(SearchItem == "" && SearchName == "")
         {
             if(x.ReceivedGil > 0)
             {
-                var d = this.CharasRecvGilFrom.GetOrCreate(x.CidUlong);
+                var d = CharasRecvGilFrom.GetOrCreate(x.CidUlong);
                 if(!d.ContainsKey(x.TradePartnerCID))
                 {
                     d[x.TradePartnerCID] = x.ReceivedGil;
@@ -154,7 +154,7 @@ public unsafe class TabTradeLog : BaseTab<TradeDescriptor>
             }
             if(x.ReceivedGil < 0)
             {
-                var d = this.CharasGivenGilTo.GetOrCreate(x.CidUlong);
+                var d = CharasGivenGilTo.GetOrCreate(x.CidUlong);
                 if(!d.ContainsKey(x.TradePartnerCID))
                 {
                     d[x.TradePartnerCID] = -x.ReceivedGil;
