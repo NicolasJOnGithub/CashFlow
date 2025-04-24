@@ -160,7 +160,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
                 S.MainWindow.CIDMap = newCidMap;
                 Results = data.Count;
                 Data = newData;
-            });
+            }).Wait();
         });
     }
 

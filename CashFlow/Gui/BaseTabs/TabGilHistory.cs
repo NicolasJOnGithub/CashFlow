@@ -21,7 +21,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
     private Dictionary<ulong, long> GilByCharaSum = [];
     private bool AutoFit = false;
     private long TotalDiff = 0;
-    private long EarliestDiffDate = long.MaxValue;
+    private volatile nint EarliestDiffDate = nint.MaxValue;
     private OrderedDictionary<uint, long> TopItemsSold = [];
     private OrderedDictionary<uint, long> TopItemsPurchased = [];
     private Dictionary<long, int> Diffs = [];
@@ -389,7 +389,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         Diffs.Clear();
         AutoFit = true;
         TotalDiff = 0;
-        EarliestDiffDate = long.MaxValue;
+        EarliestDiffDate = nint.MaxValue;
         TopItemsPurchased.Clear();
         TopItemsSold.Clear();
         return P.DataProvider.GetGilRecords();
@@ -410,15 +410,15 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
                 }
             }
         }
-        var latest = Data.OrderBy(x => x.UnixTime).FirstOrDefault();
+        var latest = newData.OrderBy(x => x.UnixTime).FirstOrDefault(x => x != null);
         if(latest != null)
         {
             var latestTime = latest.UnixTime;
-            foreach(var data in Data)
+            foreach(var data in newData)
             {
                 if(latestTime - data.UnixTime < 365 * 24 * 60 * 60 * 1000L)
                 {
-                    if(data.UnixTime < EarliestDiffDate) EarliestDiffDate = data.UnixTime;
+                    if(data.UnixTime < EarliestDiffDate) EarliestDiffDate = (nint)data.UnixTime;
                     TotalDiff += data.Diff;
                 }
             }
@@ -435,7 +435,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
                 TopItemsSold = [.. S.MainWindow.TabNpcSales.ItemValues.Union(S.MainWindow.TabRetainerSales.ItemValues).OrderByDescending(x => x.Value).Take(5)];
                 TopItemsPurchased = [.. S.MainWindow.TabNpcPurchases.ItemValues.Union(S.MainWindow.TabShopPurchases.ItemValues).OrderByDescending(x => x.Value).Take(5)];
             });
-        });
+        }).Wait();
     }
 
     public override bool ProcessSearchByItem(GilRecordSqlDescriptor x)
