@@ -24,7 +24,7 @@ public unsafe class TabShopPurchases : BaseTab<ShopPurchaseSqlDescriptor>
 
                 ImGui.TableNextColumn();
                 Utils.DrawGilDecrease();
-                ImGuiEx.Text($" {(int)(t.Price * t.Quantity * 1.05f):N0}");
+                ImGuiEx.Text($" {(int)(t.Price * t.Quantity * (t.IsMannequinnBool?1f:1.05f)):N0}");
                 if(t.IsMannequinnBool)
                 {
                     ImGui.SameLine(0, 2);
