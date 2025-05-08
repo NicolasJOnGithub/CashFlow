@@ -4,6 +4,7 @@ using CashFlow.DataProvider;
 using CashFlow.DataProvider.Sqlite;
 using ECommons.Configuration;
 using ECommons.Events;
+using ECommons.Funding;
 using ECommons.GameHelpers;
 using ECommons.Singletons;
 using ECommons.Throttlers;
@@ -22,6 +23,7 @@ public sealed unsafe class CashFlow : IDalamudPlugin
     {
         P = this;
         ECommonsMain.Init(dalamudPluginInterface, this);
+        PatreonBanner.IsOfficialPlugin = () => true;
         Configuration = EzConfig.Init<Configuration>();
         Censor.Config = Configuration.CensorConfig;
         DataProvider = new SqliteDataProvider();
@@ -42,7 +44,7 @@ public sealed unsafe class CashFlow : IDalamudPlugin
         }
         if(Player.CID != 0)
         {
-            if(flag.EqualsAny(ConditionFlag.LoggingOut, ConditionFlag.BetweenAreas) && value)
+            if(flag.EqualsAny(ConditionFlag.LoggingOut, ConditionFlag.BetweenAreas, ConditionFlag.OccupiedSummoningBell) && value)
             {
                 var entry = new GilRecordSqlDescriptor()
                 {

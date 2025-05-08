@@ -16,6 +16,7 @@ public abstract unsafe class DataProviderBase
     public abstract void RecordIncomingTrade(TradeDescriptor descriptor);
     public abstract List<TradeDescriptor> GetTrades(long unixTimeMsMin = 0, long unixTimeMsMax = 0);
     public abstract Sender? GetPlayerInfo(ulong CID);
+    public abstract void PurgeAllRecords(ulong CID);
     public abstract Dictionary<ulong, Sender> GetRegisteredPlayers();
     public abstract void RecordRetainerHistory(List<RetainerHistoryData> trades, ulong CID, string retainerName);
     public abstract List<RetainerSaleDescriptor> GetRetainerHistory(long unixTimeMsMin = 0, long unixTimeMsMax = 0);

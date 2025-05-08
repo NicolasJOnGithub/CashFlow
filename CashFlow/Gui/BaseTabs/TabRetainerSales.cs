@@ -74,6 +74,9 @@ public unsafe class TabRetainerSales : BaseTab<RetainerSaleDescriptor>
 
     public override void AddData(RetainerSaleDescriptor data, List<RetainerSaleDescriptor> list)
     {
+        if(C.Blacklist.Contains(data.CidUlong)) return;
+        if(C.DisplayExclusionsRetainerSalesNormal.Contains(data.CidUlong) && !data.IsMannequinn) return;
+        if(C.DisplayExclusionsRetainerSalesMannequinn.Contains(data.CidUlong) && data.IsMannequinn) return;
         var id = (uint)data.ItemID % 1_000_000u;
         if(!ItemValues.ContainsKey(id)) ItemValues[id] = 0;
         ItemValues[id] += data.Price * data.Quantity;

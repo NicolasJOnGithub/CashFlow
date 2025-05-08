@@ -376,6 +376,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
 
     public override bool ShouldAddData(GilRecordSqlDescriptor data)
     {
+        if(C.DisplayExclusionsTradeLog.Contains(data.CidUlong) || C.Blacklist.Contains(data.CidUlong)) return false;
         if(!RecordedCIDs.Contains(data.CidUlong)) RecordedCIDs.Add(data.CidUlong);
         if(SelectedCID != 0) return data.CidUlong == SelectedCID;
         return base.ShouldAddData(data);
@@ -451,9 +452,11 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
 
     public override void AddData(GilRecordSqlDescriptor data, List<GilRecordSqlDescriptor> list)
     {
+        if(C.Blacklist.Contains(data.CidUlong)) return;
+        if(C.DisplayExclusionsTradeLog.Contains(data.CidUlong)) return;
         base.AddData(data, list);
         var cur = data.GilPlayer + data.GilRetainer;
-        data.Diff = PrevGil.ContainsKey(data.CidUlong) ? cur - PrevGil[data.CidUlong] : 0;
+        data.Diff = PrevGil.TryGetValue(data.CidUlong, out var value) ? cur - value : 0;
         PrevGil[data.CidUlong] = cur;
         var date = Utils.GetLocalDateFromUnixTime(data.UnixTime);
         GilByDate.GetOrCreate(date)[data.CidUlong] = cur;

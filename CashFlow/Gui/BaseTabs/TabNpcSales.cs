@@ -38,9 +38,11 @@ public unsafe class TabNpcSales : BaseTab<NpcSaleSqlDescriptor>
 
     public override void AddData(NpcSaleSqlDescriptor data, List<NpcSaleSqlDescriptor> list)
     {
+        if(C.Blacklist.Contains(data.CidUlong)) return;
+        if(C.DisplayExclusionsNpcSales.Contains(data.CidUlong)) return;
         var id = (uint)data.Item % 1_000_000u;
         if(!ItemValues.ContainsKey(id)) ItemValues[id] = 0;
-        ItemValues[id] += data.Price * data.Quantity;
+        ItemValues[id] += data.Price;
         base.AddData(data, list);
     }
 

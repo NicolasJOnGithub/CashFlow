@@ -50,6 +50,9 @@ public unsafe class TabShopPurchases : BaseTab<ShopPurchaseSqlDescriptor>
 
     public override void AddData(ShopPurchaseSqlDescriptor data, List<ShopPurchaseSqlDescriptor> list)
     {
+        if(C.Blacklist.Contains(data.CidUlong)) return;
+        if(C.DisplayExclusionsShopPurchasesNormal.Contains(data.CidUlong) && !data.IsMannequinnBool) return;
+        if(C.DisplayExclusionsShopPurchasesMannequinn.Contains(data.CidUlong) && data.IsMannequinnBool) return;
         var id = (uint)data.Item % 1_000_000u;
         if(!ItemValues.ContainsKey(id)) ItemValues[id] = 0;
         ItemValues[id] += data.Price * data.Quantity;

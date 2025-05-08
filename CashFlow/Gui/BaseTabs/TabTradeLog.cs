@@ -129,7 +129,8 @@ public unsafe class TabTradeLog : BaseTab<TradeDescriptor>
 
     public override void AddData(TradeDescriptor x, List<TradeDescriptor> list)
     {
-
+        if(C.Blacklist.Contains(x.CidUlong)) return;
+        if(C.DisplayExclusionsTradeLog.Contains(x.CidUlong)) return;
         if(SearchItem == "" && SearchName == "")
         {
             if(x.ReceivedGil > 0)

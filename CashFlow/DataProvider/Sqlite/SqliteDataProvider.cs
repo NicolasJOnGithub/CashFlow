@@ -95,6 +95,20 @@ public unsafe class SqliteDataProvider : DataProviderBase
         return null;
     }
 
+    public override void PurgeAllRecords(ulong CID)
+    {
+        var cidLong = *(long*)&CID;
+        S.WorkerThread.ClearAndEnqueue(() =>
+        {
+            using var db = new GilsightQueryFactory();
+            foreach(var table in (string[])[Tables.Trades, Tables.GilRecords, Tables.NpcSales, Tables.NpcPurchases, Tables.RetainerSales, Tables.ShopPurchases])
+            {
+                var result = db.Query(table).Where("Cid", "=", cidLong).Delete();
+                PluginLog.Information($"Removed {result} entries from {table}");
+            }
+        });
+    }
+
     public override List<TradeDescriptor> GetTrades(long unixTimeMsMin = 0, long unixTimeMsMax = 0)
     {
         var ret = new List<TradeDescriptor>();

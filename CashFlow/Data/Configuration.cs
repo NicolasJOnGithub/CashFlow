@@ -16,4 +16,13 @@ public class Configuration : IEzConfig
     public bool UseCustomTimeFormat = false;
     public string CustomTimeFormat = "MM.dd.yyyy HH:mm";
     public Dictionary<ulong, long> CachedRetainerGil = [];
+    public HashSet<ulong> DisplayExclusionsGilHistory = [];
+    public HashSet<ulong> DisplayExclusionsNpcPurchases = [];
+    public HashSet<ulong> DisplayExclusionsNpcSales = [];
+    public HashSet<ulong> DisplayExclusionsRetainerSalesNormal = [];
+    public HashSet<ulong> DisplayExclusionsRetainerSalesMannequinn = [];
+    public HashSet<ulong> DisplayExclusionsShopPurchasesMannequinn = [];
+    public HashSet<ulong> DisplayExclusionsShopPurchasesNormal = [];
+    public HashSet<ulong> DisplayExclusionsTradeLog = [];
+    public HashSet<ulong> Blacklist = [];
 }

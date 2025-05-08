@@ -1,6 +1,8 @@
 ﻿using CashFlow.Gui.BaseTabs;
 using ECommons.ChatMethods;
+using ECommons.Funding;
 using ECommons.SimpleGui;
+using NightmareUI;
 
 namespace CashFlow.Gui;
 public unsafe class MainWindow : ConfigWindow
@@ -30,7 +32,8 @@ public unsafe class MainWindow : ConfigWindow
 
     public override void Draw()
     {
-        ImGuiEx.EzTabBar("tabs", [
+        PatreonBanner.DrawRight();
+        ImGuiEx.EzTabBar("tabs", PatreonBanner.Text, [
             ("Trade Log", TabTradeLog.Draw, null, true),
             ("Purchase Log", TabShopPurchases.Draw, null, true),
             ("Sale Log", TabRetainerSales.Draw, null, true),
@@ -42,7 +45,12 @@ public unsafe class MainWindow : ConfigWindow
             ]);
     }
 
-    private void DrawSettings()
+    void DrawSettings()
+    {
+        NuiTools.ButtonTabs([[new("General", DrawSettingsGeneral), new("Exclusions", TabExclusions.Draw)]]);
+    }
+
+    private void DrawSettingsGeneral()
     {
         ImGui.SetNextItemWidth(150);
         ImGuiEx.SliderInt("Records per page", ref C.PerPage, 1000, 10000);
