@@ -143,6 +143,7 @@ public unsafe class SqliteDataProvider : DataProviderBase
     public override void RecordIncomingTrade(TradeDescriptor descriptor)
     {
         var self = Player.CID;
+        if(C.Blacklist.Contains(self)) return;
         var longSelf = *(long*)&self;
         S.WorkerThread.Enqueue(() =>
         {
@@ -192,6 +193,7 @@ public unsafe class SqliteDataProvider : DataProviderBase
 
     public override void RecordRetainerHistory(List<RetainerHistoryData> trades, ulong CID, string retainerName)
     {
+        if(C.Blacklist.Contains(Player.CID)) return;
         S.WorkerThread.Enqueue(() =>
         {
             var cid = CID;
@@ -282,6 +284,7 @@ public unsafe class SqliteDataProvider : DataProviderBase
 
     public override void RecordShopPurchase(ShopPurchaseSqlDescriptor shopPurchaseDescriptor)
     {
+        if(C.Blacklist.Contains(Player.CID)) return;
         S.WorkerThread.Enqueue(() =>
         {
             using var db = new GilsightQueryFactory();
@@ -297,6 +300,7 @@ public unsafe class SqliteDataProvider : DataProviderBase
 
     public override void RecordNpcPurchase(NpcPurchaseSqlDescriptor npcPurchaseSqlDescriptor)
     {
+        if(C.Blacklist.Contains(Player.CID)) return;
         S.WorkerThread.Enqueue(() =>
         {
             using var db = new GilsightQueryFactory();
@@ -315,6 +319,7 @@ public unsafe class SqliteDataProvider : DataProviderBase
 
     public override void RecordNpcSale(NpcSaleSqlDescriptor npcSaleSqlDescriptor)
     {
+        if(C.Blacklist.Contains(Player.CID)) return;
         S.WorkerThread.Enqueue(() =>
         {
             using var db = new GilsightQueryFactory();
@@ -333,6 +338,7 @@ public unsafe class SqliteDataProvider : DataProviderBase
 
     public override void RecordPlayerGil(GilRecordSqlDescriptor gilRecordSqlDescriptor)
     {
+        if(C.Blacklist.Contains(Player.CID)) return;
         S.WorkerThread.Enqueue(() =>
         {
             var ret = new Dictionary<ulong, Sender>();
