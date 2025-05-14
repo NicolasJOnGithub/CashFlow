@@ -9,8 +9,9 @@ public unsafe class TabShopPurchases : BaseTab<ShopPurchaseSqlDescriptor>
     public override string SearchNameHint { get; } = "Search Player's/Retainer's Name...";
     public override void DrawTable()
     {
-        if(ImGuiEx.BeginDefaultTable(["Your Character", "Retainer", "Paid", "~Item", "##qty", "Date"]))
+        if(ImGuiEx.BeginDefaultTable(["Your Character", "Retainer", "Paid", "~Item", "##qty", "Date"], extraFlags: ImGuiTableFlags.Sortable | ImGuiTableFlags.SortTristate))
         {
+            ImGuiCheckSorting();
             for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];

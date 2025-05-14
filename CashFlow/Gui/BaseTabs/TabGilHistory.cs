@@ -3,6 +3,8 @@ using ECommons.ExcelServices;
 using ImPlotNET;
 using NightmareUI;
 using NightmareUI.Censoring;
+using System.Diagnostics;
+using System.Linq;
 
 namespace CashFlow.Gui.BaseTabs;
 public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
@@ -27,6 +29,16 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
     private Dictionary<long, int> Diffs = [];
 
     public override bool ShouldDrawPaginator => false;
+
+    public override List<GilRecordSqlDescriptor> SortData(List<GilRecordSqlDescriptor> data)
+    {
+        return SortColumn switch
+        {
+            0 => Order(data, x => S.MainWindow.CIDMap.SafeSelect(x.CidUlong).ToString()),
+            1 => Order(data, x => x.GilPlayer + x.GilRetainer),
+            _ => data
+        };
+    }
 
     public TabGilHistory()
     {

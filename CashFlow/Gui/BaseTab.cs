@@ -16,6 +16,10 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
     public volatile int Results = 0;
     public int Page = 1;
     private bool ShouldLoadAll = false;
+    public ImGuiSortDirection RequestedSortDirection = ImGuiSortDirection.None;
+    private ImGuiSortDirection PrevRequestedSortDirection = ImGuiSortDirection.None;
+    public int SortColumn = 0;
+    private int PrevSortColumn = 0;
 
     public virtual string SearchNameHint { get; } = "Search Player's Name...";
     public virtual string SearchItemHint { get; } = "Search Item...";
@@ -63,6 +67,12 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
         }
         if(ShouldDrawPaginator) DrawPaginator();
         DrawTable();
+        if(RequestedSortDirection != PrevRequestedSortDirection || SortColumn != PrevSortColumn)
+        {
+            PrevSortColumn = SortColumn;
+            PrevRequestedSortDirection = RequestedSortDirection;
+            new TickScheduler(() => Load(false));
+        }
     }
 
     public void DrawPaginator()
@@ -154,12 +164,17 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
                 AddData(x, newData);
             }
             newData.Reverse();
+            if(this.RequestedSortDirection != ImGuiSortDirection.None)
+            {
+                newData = SortData(newData);
+            }
             OnPostLoadDataAsync(newData);
             Svc.Framework.RunOnFrameworkThread(() =>
             {
                 S.MainWindow.CIDMap = newCidMap;
                 Results = data.Count;
                 Data = newData;
+
             }).Wait();
         });
     }
@@ -190,4 +205,30 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
     public abstract List<T> LoadData();
     public abstract bool ProcessSearchByName(T data);
     public abstract bool ProcessSearchByItem(T data);
+    public virtual List<T> SortData(List<T> data) { return data; }
+
+    public void ImGuiCheckSorting()
+    {
+        if(S.WorkerThread.IsBusy) return;
+        if(ImGui.TableGetSortSpecs().SpecsDirty)
+        {
+            if(ImGui.TableGetSortSpecs().Specs.NativePtr == null || ImGui.TableGetSortSpecs().Specs.SortDirection == ImGuiSortDirection.None)
+            {
+                this.SortColumn = 0;
+                this.RequestedSortDirection = ImGuiSortDirection.None;
+                return;
+            }
+            SortColumn = ImGui.TableGetSortSpecs().Specs.ColumnIndex;
+            this.RequestedSortDirection = ImGui.TableGetSortSpecs().Specs.SortDirection;
+        }
+    }
+    public List<T> Order<O>(List<T> list, Func<T, O> func)
+    {
+        return this.RequestedSortDirection switch
+        {
+            ImGuiSortDirection.Ascending => [.. list.OrderBy(func)],
+            ImGuiSortDirection.Descending => [.. list.OrderByDescending(func)],
+            _ => list,
+        };
+    }
 }

@@ -7,10 +7,24 @@ public unsafe class TabNpcPurchases : BaseTab<NpcPurchaseSqlDescriptor>
 {
     public Dictionary<uint, long> ItemValues = [];
 
+    public override List<NpcPurchaseSqlDescriptor> SortData(List<NpcPurchaseSqlDescriptor> data)
+    {
+        return SortColumn switch
+        {
+            0 => Order(data, x => S.MainWindow.CIDMap.SafeSelect(x.CidUlong).ToString()),
+            1 => Order(data, x => x.Price),
+            2 => Order(data, x => ExcelItemHelper.GetName((uint)(x.Item % 1000000))),
+            3 => Order(data, x => x.Quantity),
+            4 => Order(data, x => x.UnixTime),
+            _ => data
+        };
+    }
+
     public override void DrawTable()
     {
-        if(ImGuiEx.BeginDefaultTable(["Your Character", "Paid", "~Item Name", "Qty", "Date"]))
+        if(ImGuiEx.BeginDefaultTable(["Your Character", "Paid", "~Item Name", "Qty", "Date"], extraFlags: ImGuiTableFlags.Sortable | ImGuiTableFlags.SortTristate))
         {
+            ImGuiCheckSorting();
             for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];

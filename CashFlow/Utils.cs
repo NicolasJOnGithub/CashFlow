@@ -5,6 +5,7 @@ using Dalamud.Memory;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using MessagePack.Resolvers;
 
 namespace CashFlow;
 public static unsafe class Utils

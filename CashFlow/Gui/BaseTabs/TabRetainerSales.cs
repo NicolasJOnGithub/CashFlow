@@ -7,29 +7,27 @@ public unsafe class TabRetainerSales : BaseTab<RetainerSaleDescriptor>
 {
     public Dictionary<uint, long> ItemValues = [];
     public override string SearchNameHint { get; } = "Search Player's/Retainer's Name...";
+
+    public override List<RetainerSaleDescriptor> SortData(List<RetainerSaleDescriptor> data)
+    {
+        return SortColumn switch
+        {
+            0 => Order(data, x => S.MainWindow.CIDMap.SafeSelect(x.CidUlong).ToString()),
+            1 => Order(data, x => x.RetainerName),
+            2 => Order(data, x => x.BuyerName),
+            3 => Order(data, x => x.Price),
+            4 => Order(data, x => ExcelItemHelper.GetName((uint)(x.ItemID % 1000000))),
+            5 => Order(data, x => x.Quantity),
+            6 => Order(data, x => x.UnixTime),
+            _ => data
+        };
+    }
+
     public override void DrawTable()
     {
-        if(ImGuiEx.BeginDefaultTable(["Your Character", "Your Retainer", "Buyer", "Paid", "~Item", "Qty", "Date"]))
+        if(ImGuiEx.BeginDefaultTable(["Your Character", "Your Retainer", "Buyer", "Paid", "~Item", "Qty", "Date"], extraFlags: ImGuiTableFlags.Sortable | ImGuiTableFlags.SortTristate))
         {
-            /*if(ImGui.TableGetSortSpecs().SpecsDirty)
-            {
-                var index = ImGui.TableGetSortSpecs().Specs.ColumnIndex;
-                var isAsc = ImGui.TableGetSortSpecs().Specs.SortDirection == ImGuiSortDirection.Ascending;
-                static string index0func(RetainerSaleDescriptor x) => S.MainWindow.CIDMap.SafeSelect(x.Cid).ToString();
-                static string index1func(RetainerSaleDescriptor x) => x.RetainerName;
-                static string index2func(RetainerSaleDescriptor x) => x.BuyerName;
-                static string index3func(RetainerSaleDescriptor x) => ExcelItemHelper.GetName((uint)(x.ItemID % 1000000));
-                static int index4func(RetainerSaleDescriptor x) => x.Quantity;
-                static long index5func(RetainerSaleDescriptor x) => x.UnixTime;
-                static int index6func(RetainerSaleDescriptor x) => x.Price;
-                if(index == 0) Sales = [.. isAsc ? Sales.OrderBy(index0func) : Sales.OrderByDescending(index0func)];
-                if(index == 1) Sales = [.. isAsc ? Sales.OrderBy(index1func) : Sales.OrderByDescending(index1func)];
-                if(index == 2) Sales = [.. isAsc ? Sales.OrderBy(index2func) : Sales.OrderByDescending(index2func)];
-                if(index == 3) Sales = [.. isAsc ? Sales.OrderBy(index3func) : Sales.OrderByDescending(index3func)];
-                if(index == 4) Sales = [.. isAsc ? Sales.OrderBy(index4func) : Sales.OrderByDescending(index4func)];
-                if(index == 5) Sales = [.. isAsc ? Sales.OrderBy(index5func) : Sales.OrderByDescending(index5func)];
-                if(index == 6) Sales = [.. isAsc ? Sales.OrderBy(index6func) : Sales.OrderByDescending(index6func)];
-            }*/
+            ImGuiCheckSorting();
             for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];

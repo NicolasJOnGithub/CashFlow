@@ -21,10 +21,24 @@ public unsafe class TabTradeLog : BaseTab<TradeDescriptor>
             NeedsUpdate = true;
         }
     }
+
+    public override List<TradeDescriptor> SortData(List<TradeDescriptor> data)
+    {
+        return SortColumn switch
+        {
+            0 => Order(data, x => S.MainWindow.CIDMap.SafeSelect(x.CidUlong).ToString()),
+            1 => Order(data, x => S.MainWindow.CIDMap.SafeSelect(x.TradePartnerCID).ToString()),
+            2 => Order(data, x => x.UnixTime),
+            3 => Order(data, x => x.ReceivedGil),
+            _ => data
+        };
+    }
+
     public override void DrawTable()
     {
-        if(ImGuiEx.BeginDefaultTable(OnlyGil ? OnlyGilHeaders : NormalHeaders))
+        if(ImGuiEx.BeginDefaultTable(OnlyGil ? OnlyGilHeaders : NormalHeaders, extraFlags: ImGuiTableFlags.Sortable | ImGuiTableFlags.SortTristate))
         {
+            ImGuiCheckSorting();
             for(var i = IndexBegin; i < IndexEnd; i++)
             {
                 var t = Data[i];
