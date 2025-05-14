@@ -273,8 +273,9 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         void drawStats()
         {
             DrawPaginator();
-            if(ImGuiEx.BeginDefaultTable(["Your Character", "~Total Gil", "Diff", "Date"]))
+            if(ImGuiEx.BeginDefaultTable(["Your Character", "~Total Gil", "Diff", "Date"], extraFlags:ImGuiTableFlags.Sortable | ImGuiTableFlags.SortTristate))
             {
+                this.ImGuiCheckSorting();
                 for(var i = IndexBegin; i < IndexEnd; i++)
                 {
                     var t = Data[i];
@@ -298,9 +299,22 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
         }
         void drawTotals()
         {
-            if(ImGuiEx.BeginDefaultTable(["Your Character", "~Total Gil"]))
+            if(ImGuiEx.BeginDefaultTable(["Your Character", "~Total Gil"], extraFlags:ImGuiTableFlags.Sortable | ImGuiTableFlags.SortTristate))
             {
-                foreach(var t in GilByCharaSum)
+                var data = GilByCharaSum.AsEnumerable();
+                var specs = ImGui.TableGetSortSpecs();
+                if(specs.SpecsDirty && specs.NativePtr != null && specs.SpecsCount > 0 && specs.Specs.SortDirection != ImGuiSortDirection.None)
+                {
+                    data = (specs.Specs.SortDirection, specs.Specs.ColumnIndex) switch
+                    {
+                        (ImGuiSortDirection.Ascending, 0) => data.OrderBy(x => S.MainWindow.CIDMap.SafeSelect(x.Key).ToString()),
+                        (ImGuiSortDirection.Ascending, 1) => data.OrderBy(x => x.Value),
+                        (ImGuiSortDirection.Descending, 0) => data.OrderByDescending(x => S.MainWindow.CIDMap.SafeSelect(x.Key).ToString()),
+                        (ImGuiSortDirection.Descending, 1) => data.OrderByDescending(x => x.Value),
+                        _ => data
+                    };
+                }
+                foreach(var t in data)
                 {
                     ImGui.TableNextRow();
                     ImGui.TableNextColumn();
