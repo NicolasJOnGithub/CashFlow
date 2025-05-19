@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data;
 using CashFlow.Gui.Components;
+using ECommons.Throttlers;
 
 namespace CashFlow.Gui;
 public abstract unsafe class BaseTab<T> where T : IDescriptorBase
@@ -47,6 +48,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
 
     public void Draw()
     {
+        FrameThrottler.Throttle("UpdateBlocked", 2, true);
         if(S.WorkerThread.IsBusy)
         {
             LastFrame = CSFramework.Instance()->FrameCounter;

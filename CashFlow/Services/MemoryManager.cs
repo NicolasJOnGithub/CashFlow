@@ -48,7 +48,7 @@ public unsafe class MemoryManager
                     }
                 }
                 S.EventWatcher.LastMerchantInfo = null;
-                S.MainWindow.UpdateData();
+                S.MainWindow.UpdateData(false);
             }
         }
         catch(Exception e)
@@ -103,7 +103,7 @@ public unsafe class MemoryManager
             {
                 P.DataProvider.RecordShopPurchase(S.EventWatcher.LastClickedItem);
                 S.EventWatcher.LastClickedItem = null;
-                S.MainWindow.UpdateData();
+                S.MainWindow.UpdateData(false);
             }
             PluginLog.Information(MemoryHelper.ReadRaw(packet, 100).ToHexString());
         }
@@ -135,7 +135,7 @@ public unsafe class MemoryManager
                     Price = (int)a3->Price,
                     UnixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
                 });
-                S.MainWindow.UpdateData();
+                S.MainWindow.UpdateData(false);
             }
             else if(a2 == 1688)
             {
@@ -149,7 +149,7 @@ public unsafe class MemoryManager
                     Price = (int)a3->Price,
                     UnixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
                 });
-                S.MainWindow.UpdateData();
+                S.MainWindow.UpdateData(false);
             }
             else if(a2 == 1689)
             {
@@ -164,7 +164,7 @@ public unsafe class MemoryManager
                     Price = (int)a3->Price,
                     UnixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
                 });
-                S.MainWindow.UpdateData();
+                S.MainWindow.UpdateData(false);
             }
         }
         catch(Exception e)
@@ -209,7 +209,7 @@ public unsafe class MemoryManager
                 if(retainer != null)
                 {
                     P.DataProvider.RecordRetainerHistory(list, Player.CID, retainer.Name.ToString());
-                    S.MainWindow.UpdateData();
+                    S.MainWindow.UpdateData(false);
                 }
             }
         }

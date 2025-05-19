@@ -1,7 +1,9 @@
 ﻿using CashFlow.Gui.BaseTabs;
+using CashFlow.Gui.Components;
 using ECommons.ChatMethods;
 using ECommons.Funding;
 using ECommons.SimpleGui;
+using ECommons.Throttlers;
 using NightmareUI;
 
 namespace CashFlow.Gui;
@@ -14,15 +16,20 @@ public unsafe class MainWindow : ConfigWindow
     public TabNpcPurchases TabNpcPurchases = new();
     public TabNpcSales TabNpcSales = new();
     public TabGilHistory TabGilHistory = new();
+    public DateTime DateGraphStart = DateTimeOffset.FromUnixTimeSeconds(C.GraphStartDate).ToLocalTime().DateTime;
+    public string DateGraphStartStr = DateTimeOffset.FromUnixTimeSeconds(C.GraphStartDate).ToLocalTime().DateTime.ToString(DateWidget.DateFormat);
 
-    public void UpdateData()
+    public void UpdateData(bool forced)
     {
-        TabTradeLog.NeedsUpdate = true;
-        TabRetainerSales.NeedsUpdate = true;
-        TabShopPurchases.NeedsUpdate = true;
-        TabNpcPurchases.NeedsUpdate = true;
-        TabNpcSales.NeedsUpdate = true;
-        TabGilHistory.NeedsUpdate = true;
+        if(FrameThrottler.Check("UpdateBlocked") || forced)
+        {
+            TabTradeLog.NeedsUpdate = true;
+            TabRetainerSales.NeedsUpdate = true;
+            TabShopPurchases.NeedsUpdate = true;
+            TabNpcPurchases.NeedsUpdate = true;
+            TabNpcSales.NeedsUpdate = true;
+            TabGilHistory.NeedsUpdate = true;
+        }
     }
 
     private MainWindow()
@@ -92,6 +99,17 @@ public unsafe class MainWindow : ConfigWindow
             if(ImGuiEx.HoveredAndClicked())
             {
                 ShellStart("https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings");
+            }
+            ImGui.Unindent();
+        }
+
+        ImGui.Checkbox("Set fixed graph start date", ref C.UseGraphStartDate);
+        if(C.UseGraphStartDate)
+        {
+            ImGui.Indent();
+            if(DateWidget.DatePickerWithInput("##min", 1, ref DateGraphStartStr, ref DateGraphStart, out var isOpen))
+            {
+                C.GraphStartDate = DateGraphStart.ToUniversalTime().ToUnixTimeMilliseconds() / 1000;
             }
             ImGui.Unindent();
         }

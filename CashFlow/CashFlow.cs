@@ -4,6 +4,7 @@ using CashFlow.DataProvider;
 using CashFlow.DataProvider.Sqlite;
 using ECommons.Configuration;
 using ECommons.Events;
+using ECommons.EzSharedDataManager;
 using ECommons.Funding;
 using ECommons.GameHelpers;
 using ECommons.Singletons;

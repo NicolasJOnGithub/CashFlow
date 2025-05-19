@@ -350,7 +350,7 @@ public unsafe class SqliteDataProvider : DataProviderBase
             .Where("Cid", "=", Player.CID)
             .Delete();
             db.Query(Tables.GilRecords).Insert(gilRecordSqlDescriptor);
-            S.MainWindow.UpdateData();
+            S.MainWindow.UpdateData(false);
         });
     }
 

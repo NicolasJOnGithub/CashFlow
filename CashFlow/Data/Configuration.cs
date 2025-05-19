@@ -25,4 +25,6 @@ public class Configuration : IEzConfig
     public HashSet<ulong> DisplayExclusionsShopPurchasesNormal = [];
     public HashSet<ulong> DisplayExclusionsTradeLog = [];
     public HashSet<ulong> Blacklist = [];
+    public bool UseGraphStartDate = false;
+    public long GraphStartDate = DateTimeOffset.Now.ToUnixTimeSeconds();
 }
