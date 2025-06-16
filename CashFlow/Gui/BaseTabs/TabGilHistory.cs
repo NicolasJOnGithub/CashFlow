@@ -1,9 +1,12 @@
 ﻿using CashFlow.Data.SqlDescriptors;
+using CsvHelper;
 using ECommons.ExcelServices;
 using ImPlotNET;
 using NightmareUI;
 using NightmareUI.Censoring;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 
 namespace CashFlow.Gui.BaseTabs;
@@ -107,9 +110,9 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
                             {
                                 //implot bug workaround
                                 sorted = GilByDateSum.Where(x => new DateTimeOffset(x.Key, new(0), TimeSpan.Zero).ToUnixTimeSeconds() > C.GraphStartDate).OrderBy(x => x.Key.GetTotalDays());
-                                x_axisf = GilByDateSum.Where(x => new DateTimeOffset(x.Key, new(0), TimeSpan.Zero).ToUnixTimeSeconds() > C.GraphStartDate).Select(x => (float)x.Key.GetTotalDays()).ToArray();
-                                y_axis = GilByDateSum.Where(x => new DateTimeOffset(x.Key, new(0), TimeSpan.Zero).ToUnixTimeSeconds() > C.GraphStartDate).Select(x => (float)((double)x.Value / 1_000_000.0)).ToArray();
-                                strings = GilByDateSum.Where(x => new DateTimeOffset(x.Key, new(0), TimeSpan.Zero).ToUnixTimeSeconds() > C.GraphStartDate).Select(x => x.Key.GetBriefDate()).ToArray();
+                                x_axisf = [.. GilByDateSum.Where(x => new DateTimeOffset(x.Key, new(0), TimeSpan.Zero).ToUnixTimeSeconds() > C.GraphStartDate).Select(x => (float)x.Key.GetTotalDays())];
+                                y_axis = [.. GilByDateSum.Where(x => new DateTimeOffset(x.Key, new(0), TimeSpan.Zero).ToUnixTimeSeconds() > C.GraphStartDate).Select(x => (float)((double)x.Value / 1_000_000.0))];
+                                strings = [.. GilByDateSum.Where(x => new DateTimeOffset(x.Key, new(0), TimeSpan.Zero).ToUnixTimeSeconds() > C.GraphStartDate).Select(x => x.Key.GetBriefDate())];
                             }
                             ImPlot.SetNextAxesToFit();
                             AutoFit = false;

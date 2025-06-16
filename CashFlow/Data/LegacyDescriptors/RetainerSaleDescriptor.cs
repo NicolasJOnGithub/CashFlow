@@ -1,4 +1,7 @@
-﻿namespace CashFlow.Data.LegacyDescriptors;
+﻿using ECommons.ExcelServices;
+using NightmareUI.Censoring;
+
+namespace CashFlow.Data.LegacyDescriptors;
 public class RetainerSaleDescriptor : IEquatable<RetainerSaleDescriptor>, IDescriptorBase
 {
     public ulong CidUlong { get; set; }
@@ -31,6 +34,26 @@ public class RetainerSaleDescriptor : IEquatable<RetainerSaleDescriptor>, IDescr
     public override int GetHashCode()
     {
         return HashCode.Combine(CidUlong, RetainerName, ItemID, Quantity, Price, IsMannequinn, BuyerName, UnixTime);
+    }
+
+    public string[] GetCsvHeaders()
+    {
+        return ["Your Character", "Your Retainer", "Buyer", "Paid", "Is Mannequinn", "Item", "Quantity", "Is HQ", "Date"];
+    }
+
+    public string[][] GetCsvExport()
+    {
+        return [[
+            S.MainWindow.CIDMap.TryGetValue(this.CidUlong, out var s) ? Censor.Character(s.ToString()) : Censor.Hide($"{this.CidUlong:X16}"),
+            this.RetainerName,
+            this.BuyerName,
+            this.Price.ToString(),
+            this.IsMannequinn.ToString(),
+            ExcelItemHelper.GetName((uint)(this.ItemID % 1000000)),
+            this.Quantity.ToString(),
+            (this.ItemID > 1000000).ToString(),
+            DateTimeOffset.FromUnixTimeMilliseconds(this.UnixTime).ToPreferredTimeString()
+        ]];
     }
 
     public static bool operator ==(RetainerSaleDescriptor left, RetainerSaleDescriptor right)

@@ -1,6 +1,9 @@
 ﻿using CashFlow.Data;
 using CashFlow.Gui.Components;
+using CsvHelper;
 using ECommons.Throttlers;
+using System.Globalization;
+using System.IO;
 
 namespace CashFlow.Gui;
 public abstract unsafe class BaseTab<T> where T : IDescriptorBase
@@ -138,6 +141,12 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
             NeedsUpdate = true;
         }
         isOpen = open1 || open2;
+        ImGui.SameLine();
+        if(ImGuiEx.IconButton(FontAwesomeIcon.FileCsv))
+        {
+            S.CashflowFileDialogManager.Open(ExportToCSV);
+        }
+        ImGuiEx.Tooltip("Export as CSV");
     }
 
     public void Load(bool ignoreSearchFilters, bool clear = true)
@@ -224,6 +233,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
             this.RequestedSortDirection = ImGui.TableGetSortSpecs().Specs.SortDirection;
         }
     }
+
     public List<T> Order<O>(List<T> list, Func<T, O> func)
     {
         return this.RequestedSortDirection switch
@@ -232,5 +242,23 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
             ImGuiSortDirection.Descending => [.. list.OrderByDescending(func)],
             _ => list,
         };
+    }
+
+    public void ExportToCSV(string pathToFile)
+    {
+        if(Data.Count == 0) return;
+        if(File.Exists(pathToFile)) DeleteFileToRecycleBin(pathToFile);
+        using var fs = new FileStream(pathToFile, FileMode.Create);
+        using var writer = new StreamWriter(fs);
+        using var csv = new CsvWriter(writer, CultureInfo.CurrentCulture);
+        csv.WriteFields(Data[0].GetCsvHeaders());
+        foreach(var t in Data)
+        {
+            foreach(var s in t.GetCsvExport())
+            {
+                csv.WriteFields(s);
+            }
+        }
+        fs.Flush();
     }
 }

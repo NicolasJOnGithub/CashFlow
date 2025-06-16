@@ -23,4 +23,17 @@ public unsafe class GilRecordSqlDescriptor : IDescriptorBase
             Cid = *(long*)&value;
         }
     }
+
+    public string[][] GetCsvExport()
+    {
+        return [[S.MainWindow.CIDMap.TryGetValue(this.CidUlong, out var s) ? s.ToString() : $"{this.CidUlong:X16}",
+                $"{this.GilPlayer + this.GilRetainer}",
+                $"{this.Diff}",
+                DateTimeOffset.FromUnixTimeMilliseconds(this.UnixTime).ToPreferredTimeString()]];
+    }
+
+    public string[] GetCsvHeaders()
+    {
+        return ["Your Character", "Total Gil", "Diff", "Date"];
+    }
 }

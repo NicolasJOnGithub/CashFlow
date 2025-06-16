@@ -10,4 +10,5 @@ public static class ServiceManager
     public static EventWatcher EventWatcher;
     public static WorkerThread WorkerThread;
     public static TradeOverlay TradeOverlay;
+    public static CashflowFileDialogManager CashflowFileDialogManager;
 }

@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.LegacyDescriptors;
+using CsvHelper;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Memory;
 using ECommons.GameHelpers;
@@ -10,6 +11,15 @@ using MessagePack.Resolvers;
 namespace CashFlow;
 public static unsafe class Utils
 {
+    public static void WriteFields(this CsvWriter writer, params string[] fields)
+    {
+        foreach(var s in fields)
+        {
+            writer.WriteField(s);
+        }
+        writer.NextRecord();
+    }
+
     public static string GetBriefDate(this DateOnly date, bool? reverse = null)
     {
         reverse ??= C.ReverseDayMonth;
@@ -204,7 +214,7 @@ public static unsafe class Utils
         {
             TradePartnerCID = cid,
             ReceivedGil = gilDiff,
-            ReceivedItems = diff.Where(x => x.Value != 0).Select(x => new ItemWithQuantity(x.Key, x.Value)).ToArray(),
+            ReceivedItems = [.. diff.Where(x => x.Value != 0).Select(x => new ItemWithQuantity(x.Key, x.Value))],
         };
     }
 }

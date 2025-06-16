@@ -1,4 +1,6 @@
-﻿using SqlKata;
+﻿using ECommons.ExcelServices;
+using NightmareUI.Censoring;
+using SqlKata;
 
 namespace CashFlow.Data.SqlDescriptors;
 public unsafe class NpcSaleSqlDescriptor : IDescriptorBase
@@ -21,5 +23,22 @@ public unsafe class NpcSaleSqlDescriptor : IDescriptorBase
         {
             Cid = *(long*)&value;
         }
+    }
+
+    public string[] GetCsvHeaders()
+    {
+        return ["Your Character", "Paid", "~Item Name", "Is HQ", "Qty", "Date"];
+    }
+
+    public string[][] GetCsvExport()
+    {
+        return [[
+                S.MainWindow.CIDMap.TryGetValue(CidUlong, out var s) ? Censor.Character(s.ToString()) : Censor.Hide($"{CidUlong:X16}"),
+                Price.ToString(),
+                ExcelItemHelper.GetName((uint)(Item % 1000000)),
+                (Item > 1000000).ToString(),
+                Quantity.ToString(),
+                DateTimeOffset.FromUnixTimeMilliseconds(UnixTime).ToPreferredTimeString()
+                ]];
     }
 }
