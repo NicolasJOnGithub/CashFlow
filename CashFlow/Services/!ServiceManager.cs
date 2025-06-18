@@ -3,6 +3,7 @@
 namespace CashFlow.Services;
 public static class ServiceManager
 {
+    public static ThreadPool ThreadPool;
     public static MainWindow MainWindow;
     public static MemoryManager MemoryManager;
     public static CommandManager CommandManager;

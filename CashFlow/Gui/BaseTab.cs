@@ -175,7 +175,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
                 AddData(x, newData);
             }
             newData.Reverse();
-            if(this.RequestedSortDirection != ImGuiSortDirection.None)
+            if(RequestedSortDirection != ImGuiSortDirection.None)
             {
                 newData = SortData(newData);
             }
@@ -225,18 +225,18 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
         {
             if(ImGui.TableGetSortSpecs().Specs.NativePtr == null || ImGui.TableGetSortSpecs().Specs.SortDirection == ImGuiSortDirection.None)
             {
-                this.SortColumn = 0;
-                this.RequestedSortDirection = ImGuiSortDirection.None;
+                SortColumn = 0;
+                RequestedSortDirection = ImGuiSortDirection.None;
                 return;
             }
             SortColumn = ImGui.TableGetSortSpecs().Specs.ColumnIndex;
-            this.RequestedSortDirection = ImGui.TableGetSortSpecs().Specs.SortDirection;
+            RequestedSortDirection = ImGui.TableGetSortSpecs().Specs.SortDirection;
         }
     }
 
     public List<T> Order<O>(List<T> list, Func<T, O> func)
     {
-        return this.RequestedSortDirection switch
+        return RequestedSortDirection switch
         {
             ImGuiSortDirection.Ascending => [.. list.OrderBy(func)],
             ImGuiSortDirection.Descending => [.. list.OrderByDescending(func)],
@@ -247,18 +247,22 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
     public void ExportToCSV(string pathToFile)
     {
         if(Data.Count == 0) return;
-        if(File.Exists(pathToFile)) DeleteFileToRecycleBin(pathToFile);
-        using var fs = new FileStream(pathToFile, FileMode.Create);
-        using var writer = new StreamWriter(fs);
-        using var csv = new CsvWriter(writer, CultureInfo.CurrentCulture);
-        csv.WriteFields(Data[0].GetCsvHeaders());
-        foreach(var t in Data)
+        List<T> data = [.. Data];
+        S.ThreadPool.Run(() =>
         {
-            foreach(var s in t.GetCsvExport())
+            if(File.Exists(pathToFile)) DeleteFileToRecycleBin(pathToFile);
+            using var fs = new FileStream(pathToFile, FileMode.Create);
+            using var writer = new StreamWriter(fs);
+            using var csv = new CsvWriter(writer, CultureInfo.CurrentCulture);
+            csv.WriteFields(data[0].GetCsvHeaders());
+            foreach(var t in data)
             {
-                csv.WriteFields(s);
+                foreach(var s in t.GetCsvExport())
+                {
+                    csv.WriteFields(s);
+                }
             }
-        }
-        fs.Flush();
+            fs.Flush();
+        });
     }
 }

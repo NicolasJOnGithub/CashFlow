@@ -27,8 +27,8 @@ public unsafe sealed class CashflowFileDialogManager : IDisposable
         {
             if(result)
             {
-                callback(path);
+                callback(path.EndsWith(".csv")?path:$"{path}.csv");
             }
-        });
+        }, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
     }
 }
