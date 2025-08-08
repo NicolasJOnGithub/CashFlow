@@ -5,8 +5,6 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlow", "CashFlow\CashFlow.csproj", "{394A610E-9B00-48F3-97AA-B6CE66640F16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommons", "ECommons\ECommons\ECommons.csproj", "{BE71DA1F-0A3D-47DA-BEF0-DF2A644B7F4A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightmareUI", "NightmareUI\NightmareUI\NightmareUI.csproj", "{F05E3DC2-FD82-4A7C-8DC0-C45776FC9A91}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{394A610E-9B00-48F3-97AA-B6CE66640F16}.Debug|Any CPU.Build.0 = Debug|x64
 		{394A610E-9B00-48F3-97AA-B6CE66640F16}.Release|Any CPU.ActiveCfg = Release|x64
 		{394A610E-9B00-48F3-97AA-B6CE66640F16}.Release|Any CPU.Build.0 = Release|x64
-		{BE71DA1F-0A3D-47DA-BEF0-DF2A644B7F4A}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{BE71DA1F-0A3D-47DA-BEF0-DF2A644B7F4A}.Debug|Any CPU.Build.0 = Debug|x64
-		{BE71DA1F-0A3D-47DA-BEF0-DF2A644B7F4A}.Release|Any CPU.ActiveCfg = Release|x64
-		{BE71DA1F-0A3D-47DA-BEF0-DF2A644B7F4A}.Release|Any CPU.Build.0 = Release|x64
 		{F05E3DC2-FD82-4A7C-8DC0-C45776FC9A91}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{F05E3DC2-FD82-4A7C-8DC0-C45776FC9A91}.Debug|Any CPU.Build.0 = Debug|x64
 		{F05E3DC2-FD82-4A7C-8DC0-C45776FC9A91}.Release|Any CPU.ActiveCfg = Release|x64
