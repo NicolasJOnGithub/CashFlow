@@ -96,13 +96,6 @@ public static unsafe class TabDebug
                 }
             }
         }
-        if(ImGui.Button("Test purchase"))
-        {
-            if(TryGetAddonByName<AtkUnitBase>("ItemSearchResult", out var addon))
-            {
-                Callback.Fire(addon, true, 2, 0);
-            }
-        }
         if(ImGui.CollapsingHeader("Last purchased"))
         {
             var info = InfoProxyItemSearch.Instance()->LastPurchasedMarketboardItem;

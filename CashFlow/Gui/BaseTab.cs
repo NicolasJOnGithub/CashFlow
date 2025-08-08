@@ -223,7 +223,7 @@ public abstract unsafe class BaseTab<T> where T : IDescriptorBase
         if(S.WorkerThread.IsBusy) return;
         if(ImGui.TableGetSortSpecs().SpecsDirty)
         {
-            if(ImGui.TableGetSortSpecs().Specs.NativePtr == null || ImGui.TableGetSortSpecs().Specs.SortDirection == ImGuiSortDirection.None)
+            if(ImGui.TableGetSortSpecs().Specs.Handle == null || ImGui.TableGetSortSpecs().Specs.SortDirection == ImGuiSortDirection.None)
             {
                 SortColumn = 0;
                 RequestedSortDirection = ImGuiSortDirection.None;

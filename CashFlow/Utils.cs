@@ -136,7 +136,7 @@ public static unsafe class Utils
                 Price = AtkStage.Instance()->GetNumberArrayData()[36]->IntArray[402 + i * 6],
                 Amount = AtkStage.Instance()->GetNumberArrayData()[36]->IntArray[403 + i * 6],
                 HQ = AtkStage.Instance()->GetNumberArrayData()[36]->IntArray[404 + i * 6] == 1,
-                Retainer = MemoryHelper.ReadStringNullTerminated((nint)AtkStage.Instance()->GetStringArrayData()[33]->StringArray[208 + i * 6]),
+                Retainer = MemoryHelper.ReadStringNullTerminated((nint)AtkStage.Instance()->GetStringArrayData()[33]->StringArray[208 + i * 6].Value),
                 Index = i
             };
             ret.Add(item);

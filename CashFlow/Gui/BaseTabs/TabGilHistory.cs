@@ -1,7 +1,7 @@
 ﻿using CashFlow.Data.SqlDescriptors;
 using CsvHelper;
 using ECommons.ExcelServices;
-using ImPlotNET;
+using Dalamud.Bindings.ImPlot;
 using NightmareUI;
 using NightmareUI.Censoring;
 using System.Diagnostics;
@@ -314,7 +314,7 @@ public unsafe class TabGilHistory : BaseTab<GilRecordSqlDescriptor>
             {
                 var data = GilByCharaSum.AsEnumerable();
                 var specs = ImGui.TableGetSortSpecs();
-                if(specs.SpecsDirty && specs.NativePtr != null && specs.SpecsCount > 0 && specs.Specs.SortDirection != ImGuiSortDirection.None)
+                if(specs.SpecsDirty && specs.Handle != null && specs.SpecsCount > 0 && specs.Specs.SortDirection != ImGuiSortDirection.None)
                 {
                     data = (specs.Specs.SortDirection, specs.Specs.ColumnIndex) switch
                     {

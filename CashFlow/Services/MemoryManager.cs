@@ -8,6 +8,7 @@ using ECommons.GameHelpers;
 using ECommons.MathHelpers;
 using FFXIVClientStructs.FFXIV.Client.Network;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Callback = ECommons.Automation.Callback;
 
 namespace CashFlow.Services;
 public unsafe class MemoryManager
